@@ -9,6 +9,7 @@
 
 [![release](https://img.shields.io/github/release/magix-cms/gmap/gmap.svg)](https://github.com/magix-cms/gmap/releases/latest)
 
+Gmap for Magix CMS 2.x.x => https://github.com/gtraxx/gmap
 
 #### Créer et distribuer par [Magix CMS](http://www.magix-cms.com)
 
@@ -26,13 +27,11 @@
  * Cliquer sur l'onglet plugins du menu déroulant pour sélectionner gmap.
  * Une fois dans le plugin, laisser faire l'auto update
  
-#### Address
+#### Adresses
+![gmap-text](https://user-images.githubusercontent.com/356674/35143453-e24d10b4-fd01-11e7-9290-597e72e85442.png)
+
 ![gmap-address](https://user-images.githubusercontent.com/356674/35140881-24323ed6-fcf9-11e7-9e33-9d845a922f90.jpg)
 
-#### Plan d'accès
-![magixcms-gmap-3 0-plan](https://cloud.githubusercontent.com/assets/356674/24237808/16e0fb80-0fa8-11e7-8257-aa066320e56d.png)
-
-![magixcms-gmap-3 0-plan-route](https://cloud.githubusercontent.com/assets/356674/24237845/558da1d0-0fa8-11e7-921e-58f64cd74a61.png)
 ## Note
  * Pour avoir une mise en page en rapport avec votre charte graphique, 
 vous pouvez éditer le fichier index.tpl dans le dossier /plugin/gmap/skin/public/
