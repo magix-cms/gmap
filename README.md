@@ -1,4 +1,4 @@
-## Gmap pour Magix CMS
+## Gmap pour Magix CMS 3
 
 ### License
 
@@ -7,7 +7,7 @@
 
 ### version 
 
-[![release](https://img.shields.io/github/release/gtraxx/gmap.svg)](https://github.com/gtraxx/gmap/releases/latest)
+[![release](https://img.shields.io/github/release/magix-cms/gmap/gmap.svg)](https://github.com/magix-cms/gmap/releases/latest)
 
 
 #### Créer et distribuer par [Magix CMS](http://www.magix-cms.com)
@@ -15,8 +15,8 @@
 ## Installation
  * Décompresser l'archive dans le dossier "**plugins**" de magix cms
  * Connectez-vous dans l'administration de votre site internet 
- * Cliquer sur l'onglet plugins du menu déroulant pour sélectionner gmap.
- * Une fois dans le plugin, laisser faire l'auto installation
+ * Cliquer sur l'onglet plugins
+ * Cliquer sur installation de gmap
  * Il ne reste que la configuration du plugin pour correspondre avec vos données.
 
 ## Upgrade
@@ -26,8 +26,8 @@
  * Cliquer sur l'onglet plugins du menu déroulant pour sélectionner gmap.
  * Une fois dans le plugin, laisser faire l'auto update
  
-#### Configuration
-![gmap-address-v4](https://cloud.githubusercontent.com/assets/356674/26194349/664e5410-3bb8-11e7-8b7b-c840d17d2dc6.png)
+#### Address
+![gmap-address](https://user-images.githubusercontent.com/356674/35140881-24323ed6-fcf9-11e7-9e33-9d845a922f90.jpg)
 
 #### Plan d'accès
 ![magixcms-gmap-3 0-plan](https://cloud.githubusercontent.com/assets/356674/24237808/16e0fb80-0fa8-11e7-8257-aa066320e56d.png)
@@ -42,25 +42,7 @@ renommé le dossier public en **gmap**, ensuite vous pouvez éditer les fichiers
 
 ### SMARTY/JAVASCRIPT
 ```javascript
-{block name="foot" append}
-    {script src="/min/?g=form" concat=$concat type="javascript"}
-    {capture name="formjs"}{strip}
-        /min/?f=skin/{template}/js/form.min.js
-    {/strip}{/capture}
-    {script src=$smarty.capture.formjs concat=$concat type="javascript" load='async'}
-    {script src="/min/?f=plugins/gmap/js/perfect-scrollbar.min.js,plugins/gmap/js/gmap3-7.2.min.js,plugins/gmap/js/public.js" concat=$concat type="javascript"}
-    {if $plugin_status != 0}
-        <script type="text/javascript">
-			$(function(){
-				if (typeof gmap == "undefined"){
-					console.log("gmap is not defined");
-				}else{
-					gmap.run({$config_gmap},{literal}{scrollwheel: false}{/literal});
-				}
-			});
-        </script>
-    {/if}
-{/block}
+
 ````
 
 ### MISE A JOUR
@@ -72,13 +54,18 @@ et de se connecter à l'administration de celui-ci pour faire la mise à jour de
 This file is a plugin of Magix CMS.
 Magix CMS, a CMS optimized for SEO
 
-Copyright (C) 2008 - 2017 magix-cms.com support[at]magix-cms[point]com | contact[at]magix-dev[point]be
+Copyright (C) 2008 - 2018 magix-cms.com support[at]magix-cms[point]com
 
 AUTHORS :
 
  * Gerits Aurelien (Author - Developer) aurelien[at]magix-cms[point]com
 
+CONTRIBUTORS : 
+
+ * Disalvo Salvatore (Developer)
+  
 SPECIAL THANKS
+
 jean-baptiste demonte (http://gmap3.net/)
 
 Redistributions of files must retain the above copyright notice.
