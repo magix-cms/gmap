@@ -7,7 +7,7 @@
 
 ### version 
 
-[![release](https://img.shields.io/github/release/magix-cms/gmap/gmap.svg)](https://github.com/magix-cms/gmap/releases/latest)
+[![release](https://img.shields.io/github/release/magix-cms/gmap.svg)](https://github.com/magix-cms/gmap/releases/latest)
 
 Gmap for Magix CMS 2.x.x => https://github.com/gtraxx/gmap
 
