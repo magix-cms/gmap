@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Calque_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="26.9px" height="44.4px" viewBox="0 0 26.9 44.4" enable-background="new 0 0 26.9 44.4" xml:space="preserve">
+<g>
+	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="13.5835" y1="40.0537" x2="13.5835" y2="1.7983">
+		<stop offset="0.1805" style="stop-color:{$gradient[0]}"/>
+		<stop offset="0.5029" style="stop-color:{$gradient[1]}"/>
+		<stop offset="0.7123" style="stop-color:{$gradient[2]}"/>
+		<stop offset="0.889" style="stop-color:{$gradient[3]}"/>
+		<stop offset="1" style="stop-color:{$gradient[4]}"/>
+	</linearGradient>
+	<path fill="url(#SVGID_1_)" d="M13.6,40.1c-0.6-3-1.7-7.7-3.5-11.9c-0.7-1.7-1.7-3.2-2.8-4.8C5.2,20.1,3,16.7,3,12.4
+		c0-6,4.6-10.6,10.6-10.6s10.6,4.6,10.6,10.6c0,4.3-2.2,7.7-4.3,10.9c-1.1,1.6-2.1,3.2-2.8,4.8C15.3,32.3,14.2,37,13.6,40.1z"/>
+	<path fill="{$strokeColor}" d="M13.6,2.3c5.7,0,10.1,4.3,10.1,10.1c0,4.1-2.1,7.4-4.2,10.6c-1,1.6-2.1,3.2-2.8,4.9c-1.4,3.2-2.4,6.6-3,9.4
+		c-0.6-2.8-1.6-6.2-3-9.4c-0.8-1.7-1.8-3.3-2.8-4.9c-2.1-3.2-4.2-6.5-4.2-10.6C3.5,6.7,7.8,2.3,13.6,2.3 M13.6,1.3
+		C7.4,1.3,2.4,5.8,2.4,12.4c0,6.6,4.9,11,7.1,16c3.1,6.9,4,15,4,15s1-8.1,4-15c2.2-5,7.1-9.4,7.1-16C24.7,5.8,19.7,1.3,13.6,1.3
+		L13.6,1.3z"/>
+</g>
+{if $dotColor}<circle fill="{$dotColor}" cx="13.6" cy="12.4" r="3.8"/>{/if}
+</svg>
