@@ -1,17 +1,17 @@
 <div class="row">
     <form id="edit_address" action="{$smarty.server.SCRIPT_NAME}?controller={$smarty.get.controller}&amp;tabs=address&amp;action={if !$edit}add{else}edit{/if}" method="post" class="validate_form{if !$edit} add_form collapse in{else} edit_form{/if} col-ph-12 col-sm-8 col-md-6">
-        <div id="drop-zone"{if !isset($slide.img_slide) || empty($slide.img_slide)} class="no-img"{/if}>
+        <div id="drop-zone"{if !isset($address.img_address) || empty($address.img_address)} class="no-img"{/if}>
             <div id="drop-buttons" class="form-group">
                 <label id="clickHere" class="btn btn-default">
                     ou cliquez ici.. <span class="fa fa-upload"></span>
                     <input type="hidden" name="MAX_FILE_SIZE" value="4048576" />
                     <input type="file" id="img" name="img" />
-                    <input type="hidden" id="id_product" name="id" value="{$slide.id_slide}">
+                    <input type="hidden" id="id_product" name="id" value="{$address.id_address}">
                 </label>
             </div>
             <div class="preview-img">
-                {if isset($slide.img_slide) && !empty($slide.img_slide)}
-                    <img id="preview" src="/upload/slideshow/{$slide.id_slide}/{$slide.img_slide}" alt="Slide" class="preview img-responsive" />
+                {if isset($address.img_address) && !empty($address.img_address)}
+                    <img id="preview" src="/upload/gmap/{$address.id_address}/{$address.img_address}" alt="address" class="preview img-responsive" />
                 {else}
                     <img id="preview" src="#" alt="Déposez votre images ici..." class="no-img img-responsive" />
                 {/if}
@@ -105,19 +105,24 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-8">
                                         <div class="form-group">
-                                            <label for="about_address_{$id}">{#content#|ucfirst} :</label>
-                                            <textarea cols="30" rows="13" name="address[content][{$id}][about_address]" id="about_address_{$id}" class="form-control">{call name=cleantextarea field=$address.content[{$id}].about_address}</textarea>
+                                            <label for="content_address_{$id}">{#content#|ucfirst} :</label>
+                                            <textarea cols="30" rows="13" name="address[content][{$id}][content_address]" id="content_address_{$id}" class="form-control">{call name=cleantextarea field=$address.content[{$id}].content_address}</textarea>
                                         </div>
                                     </div>
                                 </div>
                             </fieldset>
                             <fieldset>
                                 <legend>Options</legend>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12">
-                                        <div class="form-group">
-                                            <label for="link_address_{$id}">{#link_address#|ucfirst} :</label>
-                                            <input type="text" class="form-control" id="link_address_{$id}" name="address[content][{$id}][link_address]" value="{$address.content[{$id}].link_address}" size="50" />
+                                <div class="form-group">
+                                    <label for="link_address_{$id}">{#link_address#|ucfirst} :</label>
+                                    <input type="text" class="form-control" id="link_address_{$id}" name="address[content][{$id}][link_address]" value="{$address.content[{$id}].link_address}" size="50" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="blank_address_{$id}">{#blank_address#|ucfirst}</label>
+                                    <div class="switch">
+                                        <input type="checkbox" id="blank_address_{$id}" name="address[content][{$id}][blank_address]" class="switch-native-control"{if $address.content[{$id}].blank_address} checked{/if} />
+                                        <div class="switch-bg">
+                                            <div class="switch-knob"></div>
                                         </div>
                                     </div>
                                 </div>

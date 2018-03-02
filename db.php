@@ -106,8 +106,8 @@ class plugins_gmap_db
 				  			SELECT COUNT(id_address), NOW() FROM mc_gmap_address';
 					break;
 				case 'addressContent':
-					$sql = 'INSERT INTO mc_gmap_address_content(id_address, id_lang, company_address, about_address, address_address, postcode_address, country_address, city_address, phone_address, mobile_address, fax_address, email_address, lat_address, lng_address, link_address, last_update, published_address)
-							VALUES (:id_address, :id_lang, :company_address, :about_address, :address_address, :postcode_address, :country_address, :city_address, :phone_address, :mobile_address, :fax_address, :email_address, :lat_address, :lng_address, :link_address, NOW(), :published_address)';
+					$sql = 'INSERT INTO mc_gmap_address_content(id_address, id_lang, company_address, content_address, address_address, postcode_address, country_address, city_address, phone_address, mobile_address, fax_address, email_address, lat_address, lng_address, link_address, blank_address, last_update, published_address)
+							VALUES (:id_address, :id_lang, :company_address, :content_address, :address_address, :postcode_address, :country_address, :city_address, :phone_address, :mobile_address, :fax_address, :email_address, :lat_address, :lng_address, :link_address, :blank_address, NOW(), :published_address)';
 					break;
 			}
 
@@ -137,7 +137,7 @@ class plugins_gmap_db
 					$sql = 'UPDATE mc_gmap_address_content
 							SET 
 								company_address = :company_address,
-								about_address = :about_address,
+								content_address = :content_address,
 								address_address = :address_address,
 								postcode_address = :postcode_address,
 								country_address = :country_address,
@@ -149,6 +149,7 @@ class plugins_gmap_db
 								lat_address = :lat_address, 
 								lng_address = :lng_address, 
 								link_address = :link_address,
+								blank_address = :blank_address,
 								last_update = NOW(), 
 								published_address = :published_address
 							WHERE id_content = :id 

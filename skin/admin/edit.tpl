@@ -22,7 +22,7 @@
                 </ul>*}
             </header>
             <div class="panel-body panel-body-form">
-                <div class="mc-message-container clearfix">
+                <div class="mc-message-container">
                     <div class="mc-message"></div>
                 </div>
                 {include file="form/address.tpl" controller="gmap"}

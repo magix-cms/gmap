@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `mc_gmap_address_content` (
   `id_address` smallint(5) unsigned NOT NULL,
   `id_lang` smallint(3) unsigned NOT NULL,
   `company_address` varchar(50) NOT NULL,
-  `about_address` text,
+  `content_address` text,
   `address_address` varchar(175) NOT NULL,
   `postcode_address` varchar(12) NOT NULL,
   `country_address` varchar(30) NOT NULL,
@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS `mc_gmap_address_content` (
   `lat_address` double NOT NULL,
   `lng_address` double NOT NULL,
   `link_address` varchar(200) DEFAULT NULL,
+  `blank_address` SMALLINT(1) UNSIGNED DEFAULT '0',
   `img_address` varchar(125) DEFAULT NULL,
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `published_address` smallint(1) NOT NULL DEFAULT '0',
@@ -73,3 +74,6 @@ INSERT INTO `mc_config_img` (`id_config_img`, `module_img`, `attribute_img`, `wi
 (null, 'plugins', 'gmap', '360', '270', 'small', 'adaptive'),
 (null, 'plugins', 'gmap', '480', '360', 'medium', 'adaptive'),
 (null, 'plugins', 'gmap', '960', '720', 'large', 'adaptive');
+
+INSERT INTO `mc_admin_access` (`id_role`, `id_module`, `view`, `append`, `edit`, `del`, `action`)
+  SELECT 1, m.id_module, 1, 1, 1, 1, 1 FROM mc_module as m WHERE name = 'gmap';

@@ -75,7 +75,7 @@
                         <p>{$addr.address_address}, {$addr.postcode_address} {$addr.city_address}, {$addr.country_address}</p>
                         {if $addr.about_address}<p>{$addr.about_address}</p>{/if}
                         <p>
-                            {if $addr.link_address}<a href="{$addr.link_address}" class="btn btn-box btn-invert btn-main-theme"">{#more_infos#}</a>{/if}
+                            {if $addr.link_address}<a href="{$addr.link_address}" class="btn btn-box btn-invert btn-main-theme{if $addr.blank_address} targetblank{/if}">{#more_infos#}</a>{/if}
                             <a href="#" class="btn btn-box btn-invert btn-main-theme select-marker" data-marker="{$addr@index}">{#see_on_map#}</a>
                         </p>
                     {/capture}

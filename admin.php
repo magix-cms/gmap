@@ -168,6 +168,7 @@ class plugins_gmap_admin extends plugins_gmap_db
             if (!array_key_exists($page['id_address'], $arr)) {
                 $arr[$page['id_address']] = array();
                 $arr[$page['id_address']]['id_address'] = $page['id_address'];
+                $arr[$page['id_address']]['img_address'] = $page['img_address'];
             }
             $arr[$page['id_address']]['content'][$page['id_lang']] = array(
                 'id_lang'           => $page['id_lang'],
@@ -184,6 +185,7 @@ class plugins_gmap_admin extends plugins_gmap_db
                 'lat_address'       => $page['lat_address'],
                 'lng_address'       => $page['lng_address'],
                 'link_address'      => $page['link_address'],
+                'blank_address'     => $page['blank_address'],
                 'img_address'       => $page['img_address'],
                 'published_address' => $page['published_address']
             );
@@ -343,7 +345,6 @@ class plugins_gmap_admin extends plugins_gmap_db
 					array('type' => $config['type']),
 					$config['data']
 				);
-				$this->header->set_json_headers();
 				$this->message->json_post_response(true,'update');
 				break;
 		}
@@ -361,7 +362,6 @@ class plugins_gmap_admin extends plugins_gmap_db
 					array('type' => $config['type']),
 					$config['data']
 				);
-				$this->header->set_json_headers();
 				$this->message->json_post_response(true,'delete',array('id' => $this->id));
 				break;
 		}
@@ -378,7 +378,7 @@ class plugins_gmap_admin extends plugins_gmap_db
 						case 'edit':
 							if(isset($this->content) && !empty($this->content)) {
 								$root = parent::fetchData(array('context' => 'one', 'type' => 'root'));
-								if ($root === null) {
+								if (!$root) {
 									parent::insert(array('type' => 'root'));
 									$root = parent::fetchData(array('context' => 'one', 'type' => 'root'));
 								}
@@ -396,17 +396,15 @@ class plugins_gmap_admin extends plugins_gmap_db
 										'data' => $content
 									);
 
-									($rootLang !== null) ? $this->upd($config) : $this->add($config);
+									($rootLang) ? $this->upd($config) : $this->add($config);
 								}
-
-								$this->header->set_json_headers();
 								$this->message->json_post_response(true,'update');
 							}
 							break;
 					}
 				}
 			}
-			if ($this->tab === 'config') {
+			elseif ($this->tab === 'config') {
 				if (isset($this->action)) {
 					switch ($this->action) {
 						case 'edit':
@@ -462,6 +460,7 @@ class plugins_gmap_admin extends plugins_gmap_db
 
 							foreach ($this->address['content'] as $lang => $address) {
 								$address['id_lang'] = $lang;
+								$address['blank_address'] = (!isset($address['blank_address']) ? 0 : 1);
 								$address['published_address'] = (!isset($address['published_address']) ? 0 : 1);
 								$addrLang = $this->getItems('addressContent',array('id' => $this->address['id'],'id_lang' => $lang),'one',false);
 
@@ -479,8 +478,6 @@ class plugins_gmap_admin extends plugins_gmap_db
 
 								$addrLang ? $this->upd($config) : $this->add($config);
 							}
-
-							$this->header->set_json_headers();
 							$this->message->json_post_response(true,$notify);
 						}
 						else {
@@ -534,10 +531,10 @@ class plugins_gmap_admin extends plugins_gmap_db
                 'address_address' => array('title' => 'name'),
                 'postcode_address' => array('title' => 'name'),
                 'country_address' => array('title' => 'name'),
-                'about_address' => array('class' => 'fixed-td-lg', 'type' => 'bin', 'input' => null),
+                'content_address' => array('class' => 'fixed-td-lg', 'type' => 'bin', 'input' => null),
                 'date_register'
             );
-            $this->data->getScheme(array('mc_gmap_address', 'mc_gmap_address_content'), array('id_address', 'company_address', 'address_address','postcode_address','country_address','about_address', 'date_register'), $assign);
+            $this->data->getScheme(array('mc_gmap_address', 'mc_gmap_address_content'), array('id_address', 'company_address', 'address_address','postcode_address','country_address','content_address', 'date_register'), $assign);
             $this->template->display('index.tpl');
         }
     }
