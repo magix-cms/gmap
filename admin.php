@@ -164,7 +164,6 @@ class plugins_gmap_admin extends plugins_gmap_db
 	{
         $arr = array();
         foreach ($data as $page) {
-
             if (!array_key_exists($page['id_address'], $arr)) {
                 $arr[$page['id_address']] = array();
                 $arr[$page['id_address']]['id_address'] = $page['id_address'];
@@ -173,7 +172,7 @@ class plugins_gmap_admin extends plugins_gmap_db
             $arr[$page['id_address']]['content'][$page['id_lang']] = array(
                 'id_lang'           => $page['id_lang'],
                 'company_address'   => $page['company_address'],
-                'about_address'     => $page['about_address'],
+                'content_address'   => $page['content_address'],
                 'address_address'   => $page['address_address'],
                 'postcode_address'  => $page['postcode_address'],
                 'country_address'   => $page['country_address'],
@@ -186,7 +185,6 @@ class plugins_gmap_admin extends plugins_gmap_db
                 'lng_address'       => $page['lng_address'],
                 'link_address'      => $page['link_address'],
                 'blank_address'     => $page['blank_address'],
-                'img_address'       => $page['img_address'],
                 'published_address' => $page['published_address']
             );
         }
@@ -253,7 +251,6 @@ class plugins_gmap_admin extends plugins_gmap_db
 	 * @param $name
 	 * @param bool $debug
 	 * @return null|string
-	 * @throws Exception
 	 */
 	private function insert_image($img, $name, $id, $debug = false){
 		if(isset($this->$img)) {
@@ -277,23 +274,20 @@ class plugins_gmap_admin extends plugins_gmap_db
 			$this->upd(array(
 				'type' => 'img',
 				'data' => array(
-					'id_address' => $id,
-					'img_address' => $resultUpload['file']
+					'id' => $id,
+					'img' => $resultUpload['file']
 				)
 			));
-
-			return $resultUpload;
 		}
 	}
 
 	/**
 	 * @param $name
 	 * @param $id
-	 * @return null|string
 	 */
 	private function address_image($name, $id){
 		if(isset($this->img) && !empty($id)) {
-			return $this->insert_image(
+			$this->insert_image(
 				'img',
 				$name,
 				$id,
@@ -364,6 +358,24 @@ class plugins_gmap_admin extends plugins_gmap_db
 				);
 				$this->message->json_post_response(true,'delete',array('id' => $this->id));
 				break;
+		}
+	}
+
+	/**
+	 * Update order
+	 */
+	public function order(){
+		$p = $this->address;
+		for ($i = 0; $i < count($p); $i++) {
+			parent::update(
+				array(
+					'type' => 'order'
+				),
+				array(
+					'id_address'    => $p[$i],
+					'order_address' => $i
+				)
+			);
 		}
 	}
 
@@ -447,15 +459,16 @@ class plugins_gmap_admin extends plugins_gmap_db
 							}
 
 							if(isset($this->img)) {
-								$img = $this->address_image($img, $this->address['id']);
+								//$img = $this->address_image($img, $this->address['id']);
+								$this->address_image($img, $this->address['id']);
 
-								$this->upd(array(
+								/*$this->upd(array(
 									'type' => 'img',
 									'data' => array(
 										'id' => $this->address['id'],
 										'img' => $img['file']
 									)
-								));
+								));*/
 							}
 
 							foreach ($this->address['content'] as $lang => $address) {
@@ -509,7 +522,7 @@ class plugins_gmap_admin extends plugins_gmap_db
 						break;
 					case 'order':
 						if (isset($this->address)) {
-							$this->update_order();
+							$this->order();
 						}
 						break;
 				}

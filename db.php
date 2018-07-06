@@ -7,10 +7,11 @@ class plugins_gmap_db
 {
 	/**
 	 * @param $config
-	 * @param bool $params
+	 * @$params bool $data
 	 * @return mixed|null
+	 * @throws Exception
 	 */
-    public function fetchData($config, $params = array())
+    public function fetchData($config, $params = false)
 	{
         $sql = '';
 
@@ -85,113 +86,145 @@ class plugins_gmap_db
     }
 
     /**
-     * @param $config
-     * @param array $params
-     */
+	 * @param $config
+	 * @param array $params
+	 * @return bool|string
+	 */
     public function insert($config, $params = array())
     {
-        if (is_array($config)) {
-			$sql = '';
+		if (!is_array($config)) return '$config must be an array';
 
-			switch ($config['type']) {
-				case 'root':
-					$sql = 'INSERT INTO mc_gmap(date_register) VALUES (NOW())';
-					break;
-				case 'content':
-					$sql = 'INSERT INTO mc_gmap_content(id_gmap, id_lang, name_gmap, content_gmap, published_gmap) 
-				  			VALUES (:id, :id_lang, :name_gmap, :content_gmap, :published_gmap)';
-					break;
-				case 'address':
-					$sql = 'INSERT INTO mc_gmap_address(order_address, date_register) 
-				  			SELECT COUNT(id_address), NOW() FROM mc_gmap_address';
-					break;
-				case 'addressContent':
-					$sql = 'INSERT INTO mc_gmap_address_content(id_address, id_lang, company_address, content_address, address_address, postcode_address, country_address, city_address, phone_address, mobile_address, fax_address, email_address, lat_address, lng_address, link_address, blank_address, last_update, published_address)
-							VALUES (:id_address, :id_lang, :company_address, :content_address, :address_address, :postcode_address, :country_address, :city_address, :phone_address, :mobile_address, :fax_address, :email_address, :lat_address, :lng_address, :link_address, :blank_address, NOW(), :published_address)';
-					break;
-			}
+		$sql = '';
 
-			if ($sql !== '') component_routing_db::layer()->insert($sql,$params);
-        }
-    }
-    /**
-     * @param $config
-     * @param array $params
-     */
-    public function update($config, $params = array())
-    {
-        if (is_array($config)) {
-			$sql = '';
+		switch ($config['type']) {
+			case 'root':
+				$sql = 'INSERT INTO mc_gmap(date_register) VALUES (NOW())';
+				break;
+			case 'content':
+				$sql = 'INSERT INTO mc_gmap_content(id_gmap, id_lang, name_gmap, content_gmap, published_gmap) 
+						VALUES (:id, :id_lang, :name_gmap, :content_gmap, :published_gmap)';
+				break;
+			case 'address':
+				$sql = 'INSERT INTO mc_gmap_address(order_address, date_register) 
+						SELECT COUNT(id_address), NOW() FROM mc_gmap_address';
+				break;
+			case 'addressContent':
+				$sql = 'INSERT INTO mc_gmap_address_content(id_address, id_lang, company_address, content_address, address_address, postcode_address, country_address, city_address, phone_address, mobile_address, fax_address, email_address, lat_address, lng_address, link_address, blank_address, last_update, published_address)
+						VALUES (:id_address, :id_lang, :company_address, :content_address, :address_address, :postcode_address, :country_address, :city_address, :phone_address, :mobile_address, :fax_address, :email_address, :lat_address, :lng_address, :link_address, :blank_address, NOW(), :published_address)';
+				break;
+		}
 
-			switch ($config['type']) {
-				case 'content':
-					$sql = 'UPDATE mc_gmap_content 
-							SET 
-								name_gmap = :name_gmap,
-							 	content_gmap = :content_gmap,
-							  	published_gmap = :published_gmap
-                			WHERE id_gmap = :id 
-                			AND id_lang = :id_lang';
-					break;
-				case 'addressContent':
-					$sql = 'UPDATE mc_gmap_address_content
-							SET 
-								company_address = :company_address,
-								content_address = :content_address,
-								address_address = :address_address,
-								postcode_address = :postcode_address,
-								country_address = :country_address,
-								city_address = :city_address,
-								phone_address = :phone_address, 
-								mobile_address = :mobile_address, 
-								fax_address = :fax_address, 
-								email_address = :email_address, 
-								lat_address = :lat_address, 
-								lng_address = :lng_address, 
-								link_address = :link_address,
-								blank_address = :blank_address,
-								last_update = NOW(), 
-								published_address = :published_address
-							WHERE id_content = :id 
-                			AND id_lang = :id_lang';
-					break;
-				case 'config':
-					$sql = "UPDATE `mc_gmap_config`
-							SET config_value = CASE config_id
-								WHEN 'api_key' THEN :api_key
-								WHEN 'markerColor' THEN :markerColor
-							END
-							WHERE config_id IN ('api_key','markerColor')";
-					break;
-				case 'img':
-					$sql = 'UPDATE mc_gmap_address
-							SET 
-								img_address = :img
-							WHERE id_address = :id';
-					break;
-			}
+		if($sql === '') return 'Unknown request asked';
 
-			if ($sql !== '') component_routing_db::layer()->update($sql,$params);
-        }
+		try {
+			component_routing_db::layer()->insert($sql,$params);
+			return true;
+		}
+		catch (Exception $e) {
+			return 'Exception reçue : '.$e->getMessage();
+		}
     }
 
 	/**
-	 * Delete a record or more
-	 * @param array $config
+	 * @param $config
 	 * @param array $params
+	 * @return bool|string
+	 */
+    public function update($config, $params = array())
+    {
+		if (!is_array($config)) return '$config must be an array';
+
+		$sql = '';
+
+		switch ($config['type']) {
+			case 'content':
+				$sql = 'UPDATE mc_gmap_content 
+						SET 
+							name_gmap = :name_gmap,
+							content_gmap = :content_gmap,
+							published_gmap = :published_gmap
+						WHERE id_gmap = :id 
+						AND id_lang = :id_lang';
+				break;
+			case 'addressContent':
+				$sql = 'UPDATE mc_gmap_address_content
+						SET 
+							company_address = :company_address,
+							content_address = :content_address,
+							address_address = :address_address,
+							postcode_address = :postcode_address,
+							country_address = :country_address,
+							city_address = :city_address,
+							phone_address = :phone_address, 
+							mobile_address = :mobile_address, 
+							fax_address = :fax_address, 
+							email_address = :email_address, 
+							lat_address = :lat_address, 
+							lng_address = :lng_address, 
+							link_address = :link_address,
+							blank_address = :blank_address,
+							last_update = NOW(), 
+							published_address = :published_address
+						WHERE id_content = :id 
+						AND id_lang = :id_lang';
+				break;
+			case 'config':
+				$sql = "UPDATE `mc_gmap_config`
+						SET config_value = CASE config_id
+							WHEN 'api_key' THEN :api_key
+							WHEN 'markerColor' THEN :markerColor
+						END
+						WHERE config_id IN ('api_key','markerColor')";
+				break;
+			case 'img':
+				$sql = 'UPDATE mc_gmap_address
+						SET 
+							img_address = :img
+						WHERE id_address = :id';
+				break;
+			case 'order':
+				$sql = 'UPDATE mc_gmap_address 
+						SET order_address = :order_address
+						WHERE id_address = :id_address';
+				break;
+		}
+
+		if($sql === '') return 'Unknown request asked';
+
+		try {
+			component_routing_db::layer()->insert($sql,$params);
+			return true;
+		}
+		catch (Exception $e) {
+			return 'Exception reçue : '.$e->getMessage();
+		}
+    }
+
+	/**
+	 * @param $config
+	 * @param array $params
+	 * @return bool|string
 	 */
 	protected function delete($config, $params = array()) {
-		if(is_array($config)){
-			$sql = '';
+		if (!is_array($config)) return '$config must be an array';
 
-			switch ($config['type']) {
-				case 'address':
-					$sql = 'DELETE FROM mc_gmap_address
-							WHERE id_address = :id';
-					break;
-			}
+		$sql = '';
 
-			if ($sql !== '') component_routing_db::layer()->delete($sql,$params);
+		switch ($config['type']) {
+			case 'address':
+				$sql = 'DELETE FROM mc_gmap_address
+						WHERE id_address = :id';
+				break;
+		}
+
+		if($sql === '') return 'Unknown request asked';
+
+		try {
+			component_routing_db::layer()->delete($sql,$params);
+			return true;
+		}
+		catch (Exception $e) {
+			return 'Exception reçue : '.$e->getMessage();
 		}
 	}
 }
