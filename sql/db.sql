@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `mc_gmap_address_content` (
   `lng_address` double NOT NULL,
   `link_address` varchar(200) DEFAULT NULL,
   `blank_address` SMALLINT(1) UNSIGNED DEFAULT '0',
+  `img_address` varchar(125) DEFAULT NULL,
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `published_address` smallint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_content`),

@@ -1,7 +1,6 @@
 <div class="row">
-    <form id="edit_address" action="{$smarty.server.SCRIPT_NAME}?controller={$smarty.get.controller}&amp;tabs=address&amp;action={if !$edit}add{else}edit{/if}" method="post" class="validate_form{if !$edit} add_form collapse in{else} edit_form{/if} col-ph-12 col-lg-8 col-xl-6">
+    <form id="edit_address" action="{$smarty.server.SCRIPT_NAME}?controller={$smarty.get.controller}&amp;tabs=address&amp;action={if !$edit}add{else}edit{/if}" method="post" class="validate_form{if !$edit} add_form collapse in{else} edit_form{/if} col-ph-12 col-sm-8 col-md-6">
         <div id="drop-zone"{if !isset($address.img_address) || empty($address.img_address)} class="no-img"{/if}>
-            <p>Déposez votre image ici...</p>
             <div id="drop-buttons" class="form-group">
                 <label id="clickHere" class="btn btn-default">
                     ou cliquez ici.. <span class="fa fa-upload"></span>
