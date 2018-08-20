@@ -1,6 +1,6 @@
 {extends file="layout.tpl"}
 {block name="styleSheet" append}
-    <script src="{if isset($smarty.server.HTTPS) eq 'on'}https{else}http{/if}://maps.google.com/maps/api/js?sensor=false&amp;language={getlang}{if $config.api_key != '' AND $config.api_key != NULL}&amp;key={$config.api_key}{/if}" type="text/javascript"></script>
+    <script src="{if isset($smarty.server.HTTPS) eq 'on'}https{else}http{/if}://maps.google.com/maps/api/js?language={getlang}{if $config.api_key != '' AND $config.api_key != NULL}&amp;key={$config.api_key}{/if}" type="text/javascript"></script>
     {headlink rel="stylesheet" href="/min/?f=plugins/gmap/css/perfect-scrollbar.min.css" concat=$concat media="screen"}
 {/block}
 {block name="title"}{seo_rewrite conf=['level'=>'root','type'=>'title','default'=>{#seo_title_gmap#}]}{/block}
