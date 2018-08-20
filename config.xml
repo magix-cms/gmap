@@ -27,13 +27,13 @@
 		</authors>
 		<release>
 			<date_create>21/01/2012</date_create>
-			<date_update>06/09/2017</date_update>
+			<date_update>20/08/2018</date_update>
 			<version>5.0</version>
 			<phase>Stable</phase>
 		</release>
 		<support>
-			<ticket href="https://github.com/gtraxx/gmap/issues"></ticket>
-			<git href="https://github.com/gtraxx/gmap"></git>
+			<ticket href="https://github.com/magix-cms/gmap/issues"></ticket>
+			<git href="https://github.com/magix-cms/gmap/"></git>
 		</support>
 	</data>
 </config>
