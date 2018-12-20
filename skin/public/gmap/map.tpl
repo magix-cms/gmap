@@ -37,9 +37,11 @@
                     <span class="open"><i class="material-icons">directions</i></span>
                     <span class="close"><i class="material-icons">close</i></span>
                 </a>
-                <a id="openapp" class="btn btn-lg pull-right visible-ph visible-xs" href="geo:{$addresses[0].lat_address},{$addresses[0].lng_address}?q={$addresses[0].address_address|escape:'url'}%2C%20{$addresses[0].city_address|escape:'url'}%2C%20{$addresses[0].country_address|escape:'url'}" target="_blank">
+                {strip}<a id="openapp" class="btn btn-lg pull-right visible-ph visible-xs"
+                   {if $mOS === 'IOS'} href="http://maps.apple.com/maps?ll={$addresses[0].lat_address},{$addresses[0].lng_address}&q={$addresses[0].address_address|escape:'url'}%2C%20{$addresses[0].city_address|escape:'url'}%2C%20{$addresses[0].country_address|escape:'url'}"
+                   {else} href="geo:{$addresses[0].lat_address},{$addresses[0].lng_address}?q={$addresses[0].address_address|escape:'url'}%2C%20{$addresses[0].city_address|escape:'url'}%2C%20{$addresses[0].country_address|escape:'url'}"{/if} target="_blank">
                     <i class="material-icons">directions</i>
-                </a>
+                </a>{/strip}
                     <button class="btn btn-default btn-box hidepanel open">
                         <span class="show-less ver"><i class="material-icons">keyboard_arrow_up</i></span>
                         <span class="show-more ver"><i class="material-icons">keyboard_arrow_down</i></span>
@@ -69,22 +71,22 @@
                 {if ($addr@index)%2 == 0}
                     <div class="row">
                 {/if}
-                <div class="col-ph-12 col-sm-6 col-md-4 col-lg-6">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-6">
                     {capture name="content"}
                         <h3>{$addr.company_address}</h3>
                         <p>{$addr.address_address}, {$addr.postcode_address} {$addr.city_address}, {$addr.country_address}</p>
                         {if $addr.about_address}<p>{$addr.about_address}</p>{/if}
                         <p>
-                            {if $addr.link_address}<a href="{$addr.link_address}" class="btn btn-box btn-invert btn-main-theme{if $addr.blank_address} targetblank{/if}">{#more_infos#}</a>{/if}
+                            {if $addr.link_address}<a href="{$addr.link_address}" class="btn btn-box btn-invert btn-main-theme"">{#more_infos#}</a>{/if}
                             <a href="#" class="btn btn-box btn-invert btn-main-theme select-marker" data-marker="{$addr@index}">{#see_on_map#}</a>
                         </p>
                     {/capture}
                     {if !empty($addr.img_address)}
                         <div class="row">
-                            <div class="col-ph-12 col-xs-6 col-sm-12 col-lg-6">
-                                <img class="img-responsive" src="{geturl}/upload/gmap/{$addr.id_address}/{$addr.img_address}" alt="{$addr.company}">
+                            <div class="col-12 col-xs-6 col-sm-12 col-lg-6">
+                                <img class="img-responsive" src="{$url}/upload/gmap/{$addr.id_address}/{$addr.img_address}" alt="{$addr.company}">
                             </div>
-                            <div class="col-ph-12 col-xs-6 col-sm-12 col-lg-6">
+                            <div class="col-12 col-xs-6 col-sm-12 col-lg-6">
                                 {$smarty.capture.content}
                             </div>
                         </div>
