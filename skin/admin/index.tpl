@@ -57,9 +57,7 @@
 {block name="foot" append}
     {include file="section/footer/editor.tpl"}
     {capture name="scriptForm"}{strip}
-        /{baseadmin}/min/?f=
-        {*plugins/gmap/js/gmap3-7.2.min.js,*}
-        plugins/gmap/js/admin.min.js
+        /{baseadmin}/min/?f=plugins/gmap/js/admin.min.js
     {/strip}{/capture}
     {script src=$smarty.capture.scriptForm type="javascript"}
 
