@@ -122,7 +122,10 @@ class plugins_gmap_marker {
 	public function rgb2hex($rgb) {
 		$hex = '#';
 		foreach ($rgb as $chan) {
-			$hex .= dechex($chan);
+			$seg = dechex($chan);
+			if(strlen($seg) === 0) $seg = '00';
+			if(strlen($seg) === 1) $seg = '0'.$seg;
+			$hex .= $seg;
 		}
 		return $hex;
 	}

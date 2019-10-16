@@ -135,7 +135,7 @@ var gmap = (function ($, undefined) {
         },
         addAddress: function() {
             if ($(".map-col").length != 0) {
-                watch($('.adress'));
+                watch($('.address'));
                 watch($('.city'));
                 watch($('.postcode'));
 

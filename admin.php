@@ -114,13 +114,13 @@ class plugins_gmap_admin extends plugins_gmap_db
     }
 
 	/**
-	 * Method to override the name of the plugin in the admin menu
-	 * @return string
-	 */
-	public function getExtensionName()
-	{
-		return $this->template->getConfigVars('gmap_plugin');
-	}
+ * Method to override the name of the plugin in the admin menu
+ * @return string
+ */
+    public function getExtensionName()
+    {
+        return $this->template->getConfigVars('gmap_plugin');
+    }
 
     /**
      * Assign data to the defined variable or return the data
