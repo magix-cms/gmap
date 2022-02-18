@@ -39,11 +39,6 @@ vous pouvez éditer le fichier index.tpl dans le dossier /plugin/gmap/skin/publi
 Copier le dossier public de gmap à la racine de votre skin.
 renommé le dossier public en **gmap**, ensuite vous pouvez éditer les fichiers tpl comme bon vous semble.
 
-### SMARTY/JAVASCRIPT
-```javascript
-
-````
-
 ### MISE A JOUR
 La mise à jour du plugin est à effectuer en replaçant le dossier du plugin par la nouvelle version
 et de se connecter à l'administration de celui-ci pour faire la mise à jour des tables SQL.
