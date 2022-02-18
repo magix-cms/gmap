@@ -1,3 +1,5 @@
+// Compiler options
+@import (reference) "mixins";
 @mapH: 600px;
 @formH: 50px;
 @alertH: 50px;
@@ -142,7 +144,7 @@
 	}
 
 	.alert {
-		background-color: @main-color;
+		background-color: var(--main-color);
 		color: #f2f2f2;
 		margin-bottom: 0;
 		border-radius: 0;
@@ -243,7 +245,7 @@
 
 #addresses {
 	h3 {
-		color: @main-color;
+		color: var(--main-color);
 		font-weight: bold;
 	}
 
