@@ -74,6 +74,3 @@ INSERT INTO `mc_config_img` (`id_config_img`, `module_img`, `attribute_img`, `wi
 (null, 'plugins', 'gmap', '360', '270', 'small', 'adaptive'),
 (null, 'plugins', 'gmap', '480', '360', 'medium', 'adaptive'),
 (null, 'plugins', 'gmap', '960', '720', 'large', 'adaptive');
-
-INSERT INTO `mc_admin_access` (`id_role`, `id_module`, `view`, `append`, `edit`, `del`, `action`)
-  SELECT 1, m.id_module, 1, 1, 1, 1, 1 FROM mc_module as m WHERE name = 'gmap';

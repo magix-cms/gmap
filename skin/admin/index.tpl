@@ -26,6 +26,9 @@
             <li role="presentation" class="active"><a href="#general" aria-controls="general" role="tab" data-toggle="tab">{#text#}</a></li>
             <li role="presentation"><a href="#address" aria-controls="address" role="tab" data-toggle="tab">{#address#}</a></li>
             <li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Configuration</a></li>
+            {foreach $setTabsPlugins as $value}
+                <li role="presentation" {if $smarty.get.plugin eq $value.name}class="active"{/if}><a href="{$smarty.server.SCRIPT_NAME}?controller={$smarty.get.controller}&plugin={$value.name}" aria-controls="plugins-{$value.name}" role="tab">{$value.title|ucfirst}</a></li>
+            {/foreach}
         </ul>
     </header>
     <div class="panel-body panel-body-form">
@@ -34,6 +37,7 @@
         </div>
         {*<pre>{$pages|print_r}</pre>*}
         <div class="tab-content">
+            {if !$smarty.get.plugin}
             <div role="tabpanel" class="tab-pane active" id="general">
                 {include file="form/content.tpl" controller="gmap"}
             </div>
@@ -43,6 +47,12 @@
             <div role="tabpanel" class="tab-pane" id="config">
                 {include file="form/config.tpl"}
             </div>
+            {/if}
+            {foreach $setTabsPlugins as $value}{if $smarty.get.plugin eq $value.name}
+            <div role="tabpanel" class="tab-pane active" id="plugins-{$value.name}">
+                {if $smarty.get.plugin eq $value.name}{block name="plugin:content"}{/block}{/if}
+                </div>{/if}
+            {/foreach}
         </div>
     </div>
     </section>
