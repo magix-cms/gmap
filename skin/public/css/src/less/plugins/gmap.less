@@ -5,7 +5,7 @@
 @alertH: 50px;
 
 #gmap {
-    .form-search {
+	.form-search {
 		:is(input, button) {
 			border-radius: 0;
 			border-bottom: none;
@@ -13,72 +13,72 @@
 		}
 
 		input {
-            height: @formH;
-            padding: 1rem;
-            border: none;
-        }
+			height: @formH;
+			padding: 1rem;
+			border: none;
+		}
 
-        .subdirection {
-            .size(52px,@formH);
+		.subdirection {
+			.size(52px,@formH);
 			border-color: #ddd;
-        }
-    }
+		}
+	}
 
-    .map {
-        min-height: @mapH;
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 2rem;
+	.map {
+		min-height: @mapH;
+		position: relative;
+		overflow: hidden;
+		margin-bottom: 2rem;
 
-        > div:first-child {
-            display: table;
-            width: 100%;
-            position: relative;
-        }
-    }
+		> div:first-child {
+			display: table;
+			width: 100%;
+			position: relative;
+		}
+	}
 
-    .gmap3 {
-        height: @mapH;
-        width: 100%;
-        float: right;
-        display: table-cell;
-        transition: all .5s ease;
-        border-right: 1px solid #ccc;
+	.gmap3 {
+		height: @mapH;
+		width: 100%;
+		float: right;
+		display: table-cell;
+		transition: all .5s ease;
+		border-right: 1px solid #ccc;
 
 		img {
 			max-width: inherit;
 		}
-    }
+	}
 
-    .adp-directions {
-        .table;
-        .table-hover;
-    }
+	.adp-directions {
+		.table;
+		.table-hover;
+	}
 
-    .adp-placemark {
-        margin: 0 0 10px;
-        border-left: none;
-        border-right: none;
+	.adp-placemark {
+		margin: 0 0 10px;
+		border-left: none;
+		border-right: none;
 		width: 100%;
-        td {
-            padding: .5rem 1rem;
-        }
-    }
+		td {
+			padding: .5rem 1rem;
+		}
+	}
 
-    :is(.adp-summary,.adp-legal) {
-        padding: 0 .5rem .5rem;
-    }
+	:is(.adp-summary,.adp-legal) {
+		padding: 0 .5rem .5rem;
+	}
 
-    .map_loader {
-        position: relative;
-        margin-top: 25%;
-        left: 48%;
-        margin-left: -1rem;
-    }
+	.map_loader {
+		position: relative;
+		margin-top: 25%;
+		left: 48%;
+		margin-left: -1rem;
+	}
 
-    .gmap-content {
+	.gmap-content {
 		margin-bottom: 2rem;
-    }
+	}
 }
 
 #r-directions {
@@ -146,11 +146,13 @@
 		position: relative;
 
 		.btn:not(.hidepanel) {
-			top: 5px;
+			top: 50%;
 			right: 5px;
 			position: absolute;
 			color: #f2f2f2;
 			font-size: 18px;
+			line-height: 1;
+			transform: translateY(-50%);
 		}
 	}
 
