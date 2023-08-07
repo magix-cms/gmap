@@ -34,14 +34,37 @@
 
 {block name="foot" append}
     {include file="section/footer/editor.tpl"}
-    <script src="{if isset($smarty.server.HTTPS) eq 'on'}https{else}http{/if}://maps.google.com/maps/api/js?sensor=false&amp;language=fr{if $getConfigData.api_key != '' AND $getConfigData.api_key != NULL}&amp;key={$getConfigData.api_key}{/if}" type="text/javascript"></script>
+    <script type="text/javascript">
+        let configMap = {json_encode($getConfigData)};
+        /*async function initMap() {
+            const { Map } = await google.maps.importLibrary("maps");
+            const { Marker } = await google.maps.importLibrary("marker");
+
+            //window.addEventListener('DOMContentLoaded',() => {
+            let gMap = new GoogleMap(configMap);
+            //});
+        }*/
+    </script>
     {capture name="scriptForm"}{strip}
-        /{baseadmin}/min/?f=
-        plugins/gmap/js/gmap3-7.2.min.js,
-        plugins/gmap/js/admin.min.js
+        /{baseadmin}/min/?f=plugins/gmap/js/admin.min.js
     {/strip}{/capture}
     {script src=$smarty.capture.scriptForm type="javascript"}
+    {*<script type="text/javascript">
+        let map;
+        async function initMap() {
+            const { Map } = await google.maps.importLibrary("maps");
 
+            $(function(){
+                if (typeof gmap == "undefined")
+                {
+                    console.log("gmap is not defined");
+                } else {
+                    gmap.initMapConfig();
+                }
+            }
+        }
+    </script>
+    <script src="{if isset($smarty.server.HTTPS) eq 'on'}https{else}http{/if}://maps.google.com/maps/api/js?language=fr{if $getConfigData.api_key != '' AND $getConfigData.api_key != NULL}&amp;key={$getConfigData.api_key}{/if}&callback=initMap" type="text/javascript"></script>*}
     <script type="text/javascript">
         $(function(){
             if (typeof gmap == "undefined")

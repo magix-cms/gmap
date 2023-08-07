@@ -26,18 +26,34 @@
  *
  * @author     Salvatore Di Salvo <disalvo.infographiste@gmail.com>
  */
+/**
+ * @category plugin
+ * @package gmap
+ * @copyright MAGIX CMS Copyright (c) 2011 Gerits Aurelien, http://www.magix-dev.be, http://www.magix-cms.com
+ * @license Dual licensed under the MIT or GPL Version 3 licenses.
+ * @version 1.0
+ * @create 20-12-2021
+ * @author Aurélien Gérits <aurelien@magix-cms.com>
+ * @name plugins_gmap_marker
+ */
 class plugins_gmap_marker {
 	/**
-	 * @var
+	 * @var frontend_model_template|backend_model_template $template
+	 * @var string $color
+	 * @var string $rgb
+	 * @var string $hsl
 	 */
-	protected $template, $color, $rgb, $hsl;
+	protected $template;
+	protected string $color;
+	protected array $rgb;
+	protected array $hsl;
 
 	/**
 	 * plugins_gmap_marker constructor.
-	 * @param $hex
-	 * @param $tpl
+	 * @param string $hex
+	 * @param frontend_model_template|backend_model_template $tpl
 	 */
-	function __construct($hex, $tpl) {
+	function __construct(string $hex, $tpl) {
 		$this->template = $tpl;
 		$this->color = $hex;
 		$this->rgb = sscanf($this->color, "#%2x%2x%2x"); // Get the rgb values of the color
@@ -46,12 +62,12 @@ class plugins_gmap_marker {
 
 	/**
 	 * Convert a rgb color into a hsl color
-	 * @param $r
-	 * @param $g
-	 * @param $b
+	 * @param int $r
+	 * @param int $g
+	 * @param int $b
 	 * @return array
 	 */
-	public function rgb2hsl($r, $g, $b) {
+	public function rgb2hsl(int $r, int $g, int $b): array {
 		$var_R = ($r / 255);
 		$var_G = ($g / 255);
 		$var_B = ($b / 255);
@@ -60,7 +76,7 @@ class plugins_gmap_marker {
 		$var_Max = max($var_R, $var_G, $var_B);
 		$del_Max = $var_Max - $var_Min;
 
-		$v = $var_Max;
+		$l = $var_Max;
 
 		if ($del_Max == 0) {
 			$h = 0;
@@ -80,46 +96,46 @@ class plugins_gmap_marker {
 			if ($h > 1) $h--;
 		}
 
-		return array($h, $s, $v);
+		return [$h, $s, $l];
 	}
 
 	/**
 	 * Convert a hsl color into a rgb color
-	 * @param $h
-	 * @param $s
-	 * @param $v
+	 * @param float $h
+	 * @param float $s
+	 * @param float $l
 	 * @return array
 	 */
-	public function hsl2rgb($h, $s, $v) {
+	public function hsl2rgb(float $h, float $s, float $l): array {
 		if($s == 0) {
-			$r = $g = $B = $v * 255;
+			$r = $g = $B = $l * 255;
 		} else {
 			$var_H = $h * 6;
 			$var_i = floor( $var_H );
-			$var_1 = $v * ( 1 - $s );
-			$var_2 = $v * ( 1 - $s * ( $var_H - $var_i ) );
-			$var_3 = $v * ( 1 - $s * (1 - ( $var_H - $var_i ) ) );
+			$var_1 = $l * ( 1 - $s );
+			$var_2 = $l * ( 1 - $s * ( $var_H - $var_i ) );
+			$var_3 = $l * ( 1 - $s * (1 - ( $var_H - $var_i ) ) );
 
-			if       ($var_i == 0) { $var_R = $v     ; $var_G = $var_3  ; $var_B = $var_1 ; }
-			else if  ($var_i == 1) { $var_R = $var_2 ; $var_G = $v      ; $var_B = $var_1 ; }
-			else if  ($var_i == 2) { $var_R = $var_1 ; $var_G = $v      ; $var_B = $var_3 ; }
-			else if  ($var_i == 3) { $var_R = $var_1 ; $var_G = $var_2  ; $var_B = $v     ; }
-			else if  ($var_i == 4) { $var_R = $var_3 ; $var_G = $var_1  ; $var_B = $v     ; }
-			else                   { $var_R = $v     ; $var_G = $var_1  ; $var_B = $var_2 ; }
+			if       ($var_i == 0) { $var_R = $l     ; $var_G = $var_3  ; $var_B = $var_1 ; }
+			else if  ($var_i == 1) { $var_R = $var_2 ; $var_G = $l      ; $var_B = $var_1 ; }
+			else if  ($var_i == 2) { $var_R = $var_1 ; $var_G = $l      ; $var_B = $var_3 ; }
+			else if  ($var_i == 3) { $var_R = $var_1 ; $var_G = $var_2  ; $var_B = $l     ; }
+			else if  ($var_i == 4) { $var_R = $var_3 ; $var_G = $var_1  ; $var_B = $l     ; }
+			else                   { $var_R = $l     ; $var_G = $var_1  ; $var_B = $var_2 ; }
 
 			$r = $var_R * 255;
 			$g = $var_G * 255;
 			$B = $var_B * 255;
 		}
-		return array($r, $g, $B);
+		return [$r, $g, $B];
 	}
 
 	/**
 	 * Convert a rgb color into a hexadecimal color
-	 * @param $rgb
+	 * @param array $rgb
 	 * @return string
 	 */
-	public function rgb2hex($rgb) {
+	public function rgb2hex(array $rgb): string {
 		$hex = '#';
 		foreach ($rgb as $chan) {
 			$seg = dechex($chan);
@@ -133,58 +149,58 @@ class plugins_gmap_marker {
 	/**
 	 * Set the stroke color of the marker
 	 */
-	private function setStrokeColor()
-	{
-		$s = $this->hsl[1] - 0.02;
-		$s = $s < 0 ? 0 : $s;
-		$l = $this->hsl[2] - 0.25;
-		$l = $l < 0 ? 0 : $l;
+	private function setStrokeColor() {
+		if(!empty($this->hsl)) {
+			$s = $this->hsl[1] - 0.02;
+			$s = max($s, 0);
+			$l = $this->hsl[2] - 0.25;
+			$l = max($l, 0);
 
-		$strokeColor = $this->hsl2rgb($this->hsl[0], $s, $l);
-		$this->template->assign('strokeColor',$this->rgb2hex($strokeColor));
+			$strokeColor = $this->hsl2rgb($this->hsl[0], $s, $l);
+			$this->template->assign('strokeColor',$this->rgb2hex($strokeColor));
+		}
 	}
 
 	/**
 	 * Set the dot color of the marker
 	 */
-	private function setDotColor()
-	{
-		$s = $this->hsl[1] + 0.07;
-		$s = $s > 1 ? 1 : $s;
-		$l = $this->hsl[2] - 0.60;
-		$l = $l < 0 ? 0 : $l;
+	private function setDotColor() {
+		if(!empty($this->hsl)) {
+			$s = $this->hsl[1] + 0.07;
+			$s = min($s, 1);
+			$l = $this->hsl[2] - 0.60;
+			$l = max($l, 0);
 
-		$strokeColor = $this->hsl2rgb($this->hsl[0], $s, $l);
-		$this->template->assign('dotColor',$this->rgb2hex($strokeColor));
+			$strokeColor = $this->hsl2rgb($this->hsl[0], $s, $l);
+			$this->template->assign('dotColor',$this->rgb2hex($strokeColor));
+		}
 	}
 
 	/**
 	 * Set the background color of the marker
 	 */
-	private function setBgGradient()
-	{
-		$gradient = array(
-			$this->color
-		);
+	private function setBgGradient() {
+		if(!empty($this->color)) {
+			$gradient = [$this->color];
 
-		for($i = 1; $i < 5; $i++) {
-			$s = $this->hsl[1] - (floor((15 / 4) * $i) / 100);
-			$s = $s < 0 ? 0 : $s;
-			$l = $this->hsl[2] + (floor((3 / 4) * $i) / 100);
-			$l = $l > 1 ? 1 : $l;
+			for($i = 1; $i < 5; $i++) {
+				$s = $this->hsl[1] - (floor((15 / 4) * $i) / 100);
+				$s = max($s, 0);
+				$l = $this->hsl[2] + (floor((3 / 4) * $i) / 100);
+				$l = min($l, 1);
 
-			$gradient[$i] = $this->rgb2hex($this->hsl2rgb($this->hsl[0], $s, $l));
+				$gradient[$i] = $this->rgb2hex($this->hsl2rgb($this->hsl[0], $s, $l));
+			}
+
+			$this->template->assign('gradient',$gradient);
 		}
-
-		$this->template->assign('gradient',$gradient);
 	}
 
 	/**
 	 * Create a marker in both normal and dot-less versions
 	 * @param string $name (optional)
 	 */
-	public function createMarker($name = 'main')
-	{
+	public function createMarker(string $name = 'main') {
 		$this->setStrokeColor();
 		$this->setBgGradient();
 

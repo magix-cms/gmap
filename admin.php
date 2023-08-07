@@ -2,82 +2,104 @@
 require_once ('db.php');
 require_once('marker.php');
 /**
- * Class plugins_gmap_admin
- * Fichier pour l'administration d'un plugin
+ * @category plugin
+ * @package gmap
+ * @copyright MAGIX CMS Copyright (c) 2011 Gerits Aurelien, http://www.magix-dev.be, http://www.magix-cms.com
+ * @license Dual licensed under the MIT or GPL Version 3 licenses.
+ * @version 1.0
+ * @create 20-12-2021
+ * @author Aurélien Gérits <aurelien@magix-cms.com>
+ * @name plugins_gmap_admin
  */
-class plugins_gmap_admin extends plugins_gmap_db
-{
-	protected $controller,
-		$data,
-		$template,
-		$message,
-		$plugins,
-		$xml,
-		$sitemap,
-		$modelLanguage,
-		$collectionLanguage,
-		$upload,
-		$imagesComponent,
-		$header,
-		$module,
-		$mods;
+class plugins_gmap_admin extends plugins_gmap_db {
+	/**
+	 * @var backend_model_template $template;
+	 * @var backend_model_data $data;
+	 * @var component_core_message $message;
+	 * @var backend_controller_plugins $plugins;
+	 * @var xml_sitemap $xml;
+	 * @var backend_model_sitemap $sitemap;
+	 * @var backend_model_language $modelLanguage;
+	 * @var component_collections_language $collectionLanguage;
+	 * @var component_files_upload $upload;
+	 * @var component_files_images $imagesComponent;
+	 * @var backend_controller_module $module;
+	 */
+	protected backend_model_template $template;
+	protected backend_model_data $data;
+	protected component_core_message $message;
+	protected backend_controller_plugins $plugins;
+	protected xml_sitemap $xml;
+	protected backend_model_sitemap $sitemap;
+	protected backend_model_language $modelLanguage;
+	protected component_collections_language $collectionLanguage;
+	protected component_files_upload $upload;
+	protected component_files_images $imagesComponent;
+	protected backend_controller_module $module;
 
 	/**
-	 * Global
-	 * @var bool
+	 * @var array $mods
 	 */
-	public $edit, $action, $tab, $id;
+	protected array $mods;
 
 	/**
-	 * Configuration
-	 * @var array
+	 * @var int $edit
+	 * @var int $id
 	 */
-	public $cfg;
+	public int
+		$edit,
+		$id;
 
 	/**
-	 * Page title and content
-	 * @var array
+	 * @var string $plugin
+	 * @var string $action
+	 * @var string $tab
+	 * @var string $img Image
 	 */
-	public $content;
+	public string
+		$plugin,
+		$action,
+		$tab,
+		$img;
 
 	/**
-	 * Address information
-	 * @var array
+	 * @var array $cfg Configuration
+	 * @var array $content Page title and content
+	 * @var array $address Address information
 	 */
-	public $address, $img;
+	public array
+		$cfg,
+		$content,
+		$address;
 
 	/**
 	 * plugins_gmap_admin constructor.
 	 */
-	public function __construct(){
+	public function __construct() {
 		$this->template = new backend_model_template();
-		$this->plugins = new backend_controller_plugins();
+		$this->data = new backend_model_data($this);
 		$this->message = new component_core_message($this->template);
+		$this->plugins = new backend_controller_plugins();
 		$this->xml = new xml_sitemap();
 		$this->sitemap = new backend_model_sitemap($this->template);
 		$this->modelLanguage = new backend_model_language($this->template);
 		$this->collectionLanguage = new component_collections_language();
 		$this->upload = new component_files_upload();
 		$this->imagesComponent = new component_files_images($this->template);
-		$this->data = new backend_model_data($this);
-		$this->header = new http_header();
-
-		$formClean = new form_inputEscape();
 
 		// --- Get
-		if(http_request::isGet('controller')) $this->controller = $formClean->simpleClean($_GET['controller']);
-		if (http_request::isGet('edit')) $this->edit = $formClean->numeric($_GET['edit']);
-		if (http_request::isRequest('action')) $this->action = $formClean->simpleClean($_REQUEST['action']);
-		if (http_request::isGet('tabs')) $this->tab = $formClean->simpleClean($_GET['tabs']);
+		if (http_request::isGet('edit')) $this->edit = form_inputEscape::numeric($_GET['edit']);
+		if (http_request::isRequest('action')) $this->action = form_inputEscape::simpleClean($_REQUEST['action']);
+		if (http_request::isGet('tabs')) $this->tab = form_inputEscape::simpleClean($_GET['tabs']);
 		// --- Post
 		// - Config
-		if (http_request::isPost('cfg')) $this->cfg = $formClean->arrayClean($_POST['cfg']);
+		if (http_request::isPost('cfg')) $this->cfg = form_inputEscape::arrayClean($_POST['cfg']);
 		// - Content
 		if (http_request::isPost('content')) {
 			$array = $_POST['content'];
 			foreach($array as $key => $arr) {
 				foreach($arr as $k => $v) {
-					$array[$key][$k] = ($k == 'content_gmap') ? $formClean->cleanQuote($v) : $formClean->simpleClean($v);
+					$array[$key][$k] = ($k == 'content_gmap') ? form_inputEscape::cleanQuote($v) : form_inputEscape::simpleClean($v);
 				}
 			}
 			$this->content = $array;
@@ -91,142 +113,142 @@ class plugins_gmap_admin extends plugins_gmap_db
 				}
 			}
 			$this->address = $array;*/
-			$this->address = $formClean->arrayClean($_POST['address']);
+			$this->address = form_inputEscape::arrayClean($_POST['address']);
 		}
 		// --- Add or Edit
-		if (http_request::isPost('id')) $this->id = $formClean->simpleClean($_POST['id']);
+		if (http_request::isPost('id')) $this->id = form_inputEscape::numeric($_POST['id']);
 		// --- Image Upload
 		if(isset($_FILES['img']["name"])) $this->img = http_url::clean($_FILES['img']["name"]);
-		if (http_request::isGet('plugin')) $this->plugin = $formClean->simpleClean($_GET['plugin']);
+		if (http_request::isGet('plugin')) $this->plugin = form_inputEscape::simpleClean($_GET['plugin']);
 	}
 
 	/**
 	 * Method to override the name of the plugin in the admin menu
 	 * @return string
 	 */
-	public function getExtensionName()
-	{
+	public function getExtensionName(): string {
 		return $this->template->getConfigVars('gmap_plugin');
 	}
 
 	/**
 	 * Assign data to the defined variable or return the data
 	 * @param string $type
-	 * @param string|int|null $id
-	 * @param string $context
-	 * @param boolean $assign
+	 * @param string|array|null $id
+	 * @param string|null$context
+	 * @param bool|string $assign
 	 * @return mixed
 	 */
-	private function getItems($type, $id = null, $context = null, $assign = true) {
+	private function getItems(string $type, $id = null, ?string $context = null, $assign = true) {
 		return $this->data->getItems($type, $id, $context, $assign);
 	}
 
 	/**
-	 * @param $data
+	 * @param array $data
 	 * @return array
 	 */
-	private function setItemContentData($data)
-	{
-		$arr = array();
-		foreach ($data as $page) {
-			if (!array_key_exists($page['id_gmap'], $arr)) {
-				$arr[$page['id_gmap']] = array();
-				$arr[$page['id_gmap']]['id_gmap'] = $page['id_gmap'];
+	private function setItemContentData(array $data): array {
+		$arr = [];
+		if(!empty($data)) {
+			foreach ($data as $page) {
+				if (!array_key_exists($page['id_gmap'], $arr)) {
+					$arr[$page['id_gmap']] = [
+						'id_gmap' => $page['id_gmap']
+					];
+				}
+				$arr[$page['id_gmap']]['content'][$page['id_lang']] = [
+					'id_lang' => $page['id_lang'],
+					'name_gmap' => $page['name_gmap'],
+					'content_gmap' => $page['content_gmap'],
+					'published_gmap' => $page['published_gmap']
+				];
 			}
-			$arr[$page['id_gmap']]['content'][$page['id_lang']] = array(
-				'id_lang'          => $page['id_lang'],
-				'name_gmap'        => $page['name_gmap'],
-				'content_gmap'     => $page['content_gmap'],
-				'published_gmap'   => $page['published_gmap']
-			);
 		}
 		return $arr;
 	}
 
 	/**
-	 * @param $data
+	 * @param array $data
 	 * @return array
 	 */
-	private function setItemAddressData($data)
-	{
-		$arr = array();
-		foreach ($data as $page) {
-
-			if (!array_key_exists($page['id_address'], $arr)) {
-				$arr[$page['id_address']] = array();
-				$arr[$page['id_address']]['id_address'] = $page['id_address'];
-				$arr[$page['id_address']]['img_address'] = $page['img_address'];
+	private function setItemAddressData(array $data): array {
+		$arr = [];
+		if(!empty($data)) {
+			foreach ($data as $page) {
+				if (!array_key_exists($page['id_address'], $arr)) {
+					$arr[$page['id_address']] = [
+						'id_address' => $page['id_address'],
+						'img_address' => $page['img_address']
+					];
+				}
+				$arr[$page['id_address']]['content'][$page['id_lang']] = [
+					'id_lang' => $page['id_lang'],
+					'company_address' => $page['company_address'],
+					'content_address' => $page['content_address'],
+					'address_address' => $page['address_address'],
+					'postcode_address' => $page['postcode_address'],
+					'country_address' => $page['country_address'],
+					'city_address' => $page['city_address'],
+					'phone_address' => $page['phone_address'],
+					'mobile_address' => $page['mobile_address'],
+					'fax_address' => $page['fax_address'],
+					'email_address' => $page['email_address'],
+					'vat_address' => $page['vat_address'],
+					'lat_address' => $page['lat_address'],
+					'lng_address' => $page['lng_address'],
+					'link_address' => $page['link_address'],
+					'blank_address' => $page['blank_address'],
+					'img_address' => $page['img_address'],
+					'published_address' => $page['published_address']
+				];
 			}
-			$arr[$page['id_address']]['content'][$page['id_lang']] = array(
-				'id_lang'           => $page['id_lang'],
-				'company_address'   => $page['company_address'],
-				'content_address'   => $page['content_address'],
-				'address_address'   => $page['address_address'],
-				'postcode_address'  => $page['postcode_address'],
-				'country_address'   => $page['country_address'],
-				'city_address'      => $page['city_address'],
-				'phone_address'     => $page['phone_address'],
-				'mobile_address'    => $page['mobile_address'],
-				'fax_address'       => $page['fax_address'],
-				'email_address'     => $page['email_address'],
-				'vat_address'       => $page['vat_address'],
-				'lat_address'       => $page['lat_address'],
-				'lng_address'       => $page['lng_address'],
-				'link_address'      => $page['link_address'],
-				'blank_address'     => $page['blank_address'],
-				'img_address'       => $page['img_address'],
-				'published_address' => $page['published_address']
-			);
 		}
 		return $arr;
 	}
 
 	/**
 	 * set Data from database
-	 * @access private
+	 * @param string $type
+	 * @return array
 	 */
-	private function getBuildItems($data)
-	{
-		switch($data['type']){
+	private function getBuildItems(string $type): array {
+		switch($type){
 			case 'content':
 				$collection = $this->getItems('pages',null,'all',false);
 				return $this->setItemContentData($collection);
-				break;
 			case 'address':
 				$collection = $this->getItems('addressContent',$this->edit,'all',false);
 				return $this->setItemAddressData($collection);
-				break;
 		}
+		return [];
 	}
 
 	/**
-	 * @param $config
+	 * @param array $config
+	 * @return void
+	 * @throws Exception
 	 */
-	public function setSitemap($config){
+	public function setSitemap(array $config) {
 		$dateFormat = new date_dateformat();
 		//print 'lang sitemap plugins: '.$config['id_lang'];
 		$url = '/' . $config['iso_lang']. '/'.$config['name'].'/';
-		$this->xml->writeNode(
-			array(
-				'type'      =>  'child',
-				'loc'       =>  $this->sitemap->url(array('domain' => $config['domain'], 'url' => $url)),
-				'image'     =>  false,
-				'lastmod'   =>  $dateFormat->dateDefine(),
-				'changefreq'=>  'always',
-				'priority'  =>  '0.7'
-			)
-		);
+		$this->xml->writeNode([
+			'type' => 'child',
+			'loc' => $this->sitemap->url(['domain' => $config['domain'], 'url' => $url]),
+			'image' => false,
+			'lastmod' => $dateFormat->dateDefine(),
+			'changefreq' => 'always',
+			'priority' => '0.7'
+		]);
 	}
 
 	/**
 	 * @access private
 	 * Charge les données de configuration pour l'édition
 	 */
-	private function setConfigData()
-	{
-		$config = parent::fetchData(array('context' => 'all','type' => 'config'));
-		$configId = array();
-		$configValue = array();
+	private function setConfigData() {
+		$config = parent::fetchData(['context' => 'all','type' => 'config']);
+		$configId = [];
+		$configValue = [];
 		foreach ($config as $key) {
 			$configId[] = $key['config_id'];
 			$configValue[] = $key['config_value'];
@@ -236,78 +258,16 @@ class plugins_gmap_admin extends plugins_gmap_db
 	}
 
 	/**
-	 * Create and insert the address image
-	 * @param $img
-	 * @param $name
-	 * @param bool $debug
-	 * @return null|string
-	 * @throws Exception
-	 */
-	private function insert_image($img, $name, $id, $debug = false){
-		if(isset($this->$img)) {
-			$resultUpload = $this->upload->setImageUpload(
-				'img',
-				array(
-					'name'            => filter_rsa::randMicroUI(),
-					'edit'            => $name,
-					'prefix'          => array('s_','m_','l_'),
-					'module_img'      => 'plugins',
-					'attribute_img'   => 'gmap',
-					'original_remove' => false
-				),
-				array(
-					'upload_root_dir' => 'upload/gmap', //string
-					'upload_dir'      => $id //string ou array
-				),
-				$debug
-			);
-
-			$this->upd(array(
-				'type' => 'img',
-				'data' => array(
-					'id_address' => $id,
-					'img_address' => $resultUpload['file']
-				)
-			));
-
-			return $resultUpload;
-		}
-	}
-
-	/**
-	 * @param $name
-	 * @param $id
-	 * @return null|string
-	 */
-	private function address_image($name, $id){
-		if(isset($this->img) && !empty($id)) {
-			return $this->insert_image(
-				'img',
-				$name,
-				$id,
-				false
-			);
-		}
-	}
-
-	/**
 	 * Insert data
 	 * @param array $config
 	 */
-	private function add($config)
-	{
+	private function add(array $config) {
 		switch ($config['type']) {
 			case 'address':
-				parent::insert(
-					array('type' => $config['type'])
-				);
-				break;
+				return parent::insert($config['type']);
 			case 'addressContent':
 			case 'content':
-				parent::insert(
-					array('type' => $config['type']),
-					$config['data']
-				);
+				parent::insert($config['type'], $config['data']);
 				break;
 		}
 	}
@@ -316,23 +276,16 @@ class plugins_gmap_admin extends plugins_gmap_db
 	 * Update data
 	 * @param array $config
 	 */
-	private function upd($config)
-	{
+	private function upd(array $config) {
 		switch ($config['type']) {
 			case 'address':
 			case 'addressContent':
 			case 'img':
 			case 'content':
-				parent::update(
-					array('type' => $config['type']),
-					$config['data']
-				);
+				parent::update($config['type'],$config['data']);
 				break;
 			case 'config':
-				parent::update(
-					array('type' => $config['type']),
-					$config['data']
-				);
+				parent::update($config['type'],$config['data']);
 				$this->message->json_post_response(true,'update');
 				break;
 		}
@@ -340,16 +293,12 @@ class plugins_gmap_admin extends plugins_gmap_db
 
 	/**
 	 * Delete a record
-	 * @param $config
+	 * @param array $config
 	 */
-	private function del($config)
-	{
+	private function del(array $config) {
 		switch ($config['type']) {
 			case 'address':
-				parent::delete(
-					array('type' => $config['type']),
-					$config['data']
-				);
+				parent::delete($config['type'],$config['data']);
 				$this->message->json_post_response(true,'delete',array('id' => $this->id));
 				break;
 		}
@@ -359,7 +308,7 @@ class plugins_gmap_admin extends plugins_gmap_db
 	 *
 	 */
 	private function loadModules() {
-		$this->module = $this->module instanceof backend_controller_module ? $this->module : new backend_controller_module();
+		$this->module = isset($this->module) ?: new backend_controller_module();
 		if(empty($this->mods)) $this->mods = $this->module->load_module('gmap');
 	}
 
@@ -387,10 +336,11 @@ class plugins_gmap_admin extends plugins_gmap_db
 	 */
 	public function run(){
 		$this->loadModules();
+
 		if(isset($this->plugin)) {
 			$this->modelLanguage->getLanguage();
-			$defaultLanguage = $this->collectionLanguage->fetchData(array('context' => 'one', 'type' => 'default'));
-			$this->getItems('address',array('default_lang' => $defaultLanguage['id_lang']),'all');
+			$defaultLanguage = $this->collectionLanguage->fetchData(['context' => 'one', 'type' => 'default']);
+			$this->getItems('address',['default_lang' => $defaultLanguage['id_lang']],'all');
 			$this->getModuleTabs();
 			// Initialise l'API menu des plugins core
 			$this->modelLanguage->getLanguage();
@@ -409,11 +359,11 @@ class plugins_gmap_admin extends plugins_gmap_db
 					if (isset($this->action)) {
 						switch ($this->action) {
 							case 'edit':
-								if(isset($this->content) && !empty($this->content)) {
-									$root = parent::fetchData(array('context' => 'one', 'type' => 'root'));
+								if(!empty($this->content)) {
+									$root = parent::fetchData(['context' => 'one', 'type' => 'root']);
 									if (!$root) {
-										parent::insert(array('type' => 'root'));
-										$root = parent::fetchData(array('context' => 'one', 'type' => 'root'));
+										parent::insert('root');
+										$root = parent::fetchData(['context' => 'one', 'type' => 'root']);
 									}
 									$id = $root['id_gmap'];
 
@@ -424,10 +374,10 @@ class plugins_gmap_admin extends plugins_gmap_db
 										$content['id_lang'] = $lang;
 										$content['published_gmap'] = (!isset($content['published_gmap']) ? 0 : 1);
 
-										$config = array(
+										$config = [
 											'type' => 'content',
 											'data' => $content
-										);
+										];
 
 										($rootLang) ? $this->upd($config) : $this->add($config);
 									}
@@ -441,26 +391,32 @@ class plugins_gmap_admin extends plugins_gmap_db
 					if (isset($this->action)) {
 						switch ($this->action) {
 							case 'edit':
-								if (isset($this->cfg) && !empty($this->cfg)) {
-									if(isset($this->cfg['markerColor']) && !empty($this->cfg['markerColor'])) {
+								if (!empty($this->cfg)) {
+									if(!empty($this->cfg['markerColor'])) {
 										$marker = new plugins_gmap_marker($this->cfg['markerColor'], $this->template);
 										$marker->createMarker();
 									}
 
-									$this->upd(array(
+									$this->upd([
 										'type' => 'config',
 										'data' => $this->cfg
-									));
+									]);
 								}
 								break;
 						}
 					}
 				}
 				elseif ($this->tab === 'address') {
+
+                    /*if(http_request::isMethod('POST')) {
+                        var_dump($this->tab);
+                        var_dump($this->action);
+                        var_dump($this->address);
+                    }*/
 					switch ($this->action) {
 						case 'add':
 						case 'edit':
-							if(isset($this->address) && !empty($this->address)) {
+							if(!empty($this->address)) {
 								$notify = 'update';
 								$img = null;
 
@@ -470,47 +426,64 @@ class plugins_gmap_admin extends plugins_gmap_db
 								}
 
 								if (!isset($this->address['id'])) {
-									$this->add(array(
-										'type' => 'address'
-									));
-
-									$lastAddress = $this->getItems('lastAddress', null,'one',false);
-									$this->address['id'] = $lastAddress['id_address'];
-									$notify = 'add_redirect';
+                                    $lastAddress = $this->add(['type' => 'address']);
+									//$lastAddress = $this->getItems('lastAddress', null,'one',false);
+                                    if($lastAddress !== false) {
+                                        $this->address['id'] = $lastAddress[0]['id_address'];
+                                        $notify = 'add_redirect';
+                                    }
 								}
 
-								if(isset($this->img)) {
-									$img = $this->address_image($img, $this->address['id']);
+								if(!empty($this->img) && !empty($id)) {
+									$resultUpload = $this->upload->setImageUpload(
+										'img', [
+										'name' => filter_rsa::randMicroUI(),
+										'edit' => $img,
+										'prefix' => ['s_','m_','l_'],
+										'module_img' => 'plugins',
+										'attribute_img' => 'gmap',
+										'original_remove' => false
+									],[
+										'upload_root_dir' => 'upload/gmap', //string
+										'upload_dir' => $this->address['id'] //string ou array
+									], false);
 
-									$this->upd(array(
-										'type' => 'img',
-										'data' => array(
-											'id' => $this->address['id'],
-											'img' => $img['file']
-										)
-									));
-								}
-
-								foreach ($this->address['content'] as $lang => $address) {
-									$address['id_lang'] = $lang;
-									$address['blank_address'] = (!isset($address['blank_address']) ? 0 : 1);
-									$address['published_address'] = (!isset($address['published_address']) ? 0 : 1);
-									$addrLang = $this->getItems('addressContent',array('id' => $this->address['id'],'id_lang' => $lang),'one',false);
-
-									if($addrLang) {
-										$address['id'] = $addrLang['id_content'];
+									if(!empty($resultUpload)) {
+										$this->upd([
+											'type' => 'img',
+											'data' => [
+												'id' => $this->address['id'],
+												'img' => $resultUpload['file']
+											]
+										]);
 									}
-									else {
-										$address['id_address'] = $this->address['id'];
-									}
-
-									$config = array(
-										'type' => 'addressContent',
-										'data' => $address
-									);
-
-									$addrLang ? $this->upd($config) : $this->add($config);
 								}
+
+                                //var_dump($this->address);
+
+                                if(!empty($this->address['id'])) {
+                                    foreach ($this->address['content'] as $lang => $address) {
+                                        $address['id_lang'] = $lang;
+                                        $address['blank_address'] = (!isset($address['blank_address']) ? 0 : 1);
+                                        $address['published_address'] = (!isset($address['published_address']) ? 0 : 1);
+                                        $addrLang = $this->getItems('addressContent',['id' => $this->address['id'],'id_lang' => $lang],'one',false);
+
+                                        if($addrLang) {
+                                            $address['id'] = $addrLang['id_content'];
+                                        }
+                                        else {
+                                            $address['id_address'] = $this->address['id'];
+                                        }
+
+                                        $config = [
+                                            'type' => 'addressContent',
+                                            'data' => $address
+                                        ];
+
+                                        $addrLang ? $this->upd($config) : $this->add($config);
+                                    }
+                                }
+
 								$this->message->json_post_response(true,$notify);
 							}
 							else {
@@ -520,11 +493,11 @@ class plugins_gmap_admin extends plugins_gmap_db
 								$this->setConfigData();
 
 								if(isset($this->edit)) {
-									$setEditData = $this->getBuildItems(array('type'=>'address'));
+									$setEditData = $this->getBuildItems('address');
 									$this->template->assign('address', $setEditData[$this->edit]);
 								}
 
-								$this->template->assign('edit',($this->action === 'edit' ? true : false));
+								$this->template->assign('edit', $this->action === 'edit');
 								$this->template->display('edit.tpl');
 							}
 							break;
@@ -540,34 +513,34 @@ class plugins_gmap_admin extends plugins_gmap_db
 								);
 							}
 							break;
-						case 'order':
+						/*case 'order':
 							if (isset($this->address)) {
 								$this->update_order();
 							}
-							break;
+							break;*/
 					}
 				}
 			}
 			else {
 				$this->modelLanguage->getLanguage();
-				$defaultLanguage = $this->collectionLanguage->fetchData(array('context'=>'one','type'=>'default'));
+				$defaultLanguage = $this->collectionLanguage->fetchData(['context'=>'one','type'=>'default']);
 				$this->setConfigData();
 
-				$last = parent::fetchData(array('context' => 'one', 'type' => 'root'));
-				$pages = $this->getBuildItems(array('type' => 'content'));
-				$this->template->assign('pages', (isset($pages) && isset($last['id_gmap']) ? $pages[$last['id_gmap']] : []));
+				$last = parent::fetchData(['context' => 'one', 'type' => 'root']);
+				$pages = $this->getBuildItems('content');
+				$this->template->assign('pages', (isset($last['id_gmap']) ? $pages[$last['id_gmap']] : []));
 
-				$this->getItems('address',array('default_lang' => $defaultLanguage['id_lang']),'all');
-				$assign = array(
-					'id_address',
-					'company_address' => array('title' => 'name'),
-					'address_address' => array('title' => 'name'),
-					'postcode_address' => array('title' => 'name'),
-					'country_address' => array('title' => 'name'),
-					'content_address' => array('class' => 'fixed-td-lg', 'type' => 'bin', 'input' => null),
-					'date_register'
-				);
-				$this->data->getScheme(array('mc_gmap_address', 'mc_gmap_address_content'), array('id_address', 'company_address', 'address_address','postcode_address','country_address','content_address', 'date_register'), $assign);
+				$this->getItems('address',['default_lang' => $defaultLanguage['id_lang']],'all');
+				$assign = [
+                    'id_address',
+                    'company_address' => ['title' => 'name'],
+                    'address_address' => ['title' => 'name'],
+                    'postcode_address' => ['title' => 'name'],
+                    'country_address' => ['title' => 'name'],
+                    'content_address' => ['class' => 'fixed-td-lg', 'type' => 'bin', 'input' => null],
+                    'date_register'
+                ];
+				$this->data->getScheme(['mc_gmap_address', 'mc_gmap_address_content'], ['id_address', 'company_address', 'address_address','postcode_address','country_address','content_address', 'date_register'], $assign);
 
 				$this->getModuleTabs();
 				$this->template->display('index.tpl');

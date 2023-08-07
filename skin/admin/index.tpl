@@ -72,11 +72,11 @@
     {script src=$smarty.capture.scriptForm type="javascript"}
 
     <script type="text/javascript">
-        $(function(){
+        $(() => {
             if (typeof gmap == "undefined")
             {
                 console.log("gmap is not defined");
-            }else{
+            } else {
                 gmap.run();
             }
         });

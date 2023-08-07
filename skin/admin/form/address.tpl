@@ -6,7 +6,7 @@
                     ou cliquez ici.. <span class="fa fa-upload"></span>
                     <input type="hidden" name="MAX_FILE_SIZE" value="4048576" />
                     <input type="file" id="img" name="img" />
-                    <input type="hidden" id="id_product" name="id" value="{$address.id_address}">
+                    {*<input type="hidden" id="id_product" name="id" value="{$address.id_address}">*}
                 </label>
             </div>
             <div class="preview-img">
@@ -102,6 +102,10 @@
                                             <label for="email_address_{$id}">{#email_address#}</label>
                                             <input id="email_address_{$id}" type="text" class="form-control" name="address[content][{$id}][email_address]" placeholder="{#ph_email_address#}" {if isset($address)} value="{$address.content[{$id}].email_address}"{/if} />
                                         </div>
+                                        <div class="form-group">
+                                            <label for="vat_address_{$id}">{#vat_address#}</label>
+                                            <input id="vat_address_{$id}" type="text" class="form-control" name="address[content][{$id}][vat_address]" placeholder="{#ph_vat_address#}" {if isset($address)} value="{$address.content[{$id}].vat_address}"{/if} />
+                                        </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-8">
                                         <div class="form-group">
@@ -137,7 +141,7 @@
             {if $edit}
             <input type="hidden" name="address[id]" value="{$address.id_address}" />
             {/if}
-            <button class="btn btn-main-theme" type="submit" name="action" value="edit">{#save#|ucfirst}</button>
+            <button class="btn btn-main-theme" type="submit">{#save#|ucfirst}</button>
         </fieldset>
     </form>
 </div>

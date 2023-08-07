@@ -1,62 +1,84 @@
 <?php
 require_once('db.php');
 require_once('marker.php');
-
-class plugins_gmap_public extends plugins_gmap_db
-{
-    protected $template, $data, $getlang;
+/**
+ * @category plugin
+ * @package gmap
+ * @copyright MAGIX CMS Copyright (c) 2011 Gerits Aurelien, http://www.magix-dev.be, http://www.magix-cms.com
+ * @license Dual licensed under the MIT or GPL Version 3 licenses.
+ * @version 1.0
+ * @create 20-12-2021
+ * @author Aurélien Gérits <aurelien@magix-cms.com>
+ * @name plugins_gmap_public
+ */
+class plugins_gmap_public extends plugins_gmap_db {
+	/**
+	 * @var frontend_model_template $template
+	 * @var frontend_model_data $data
+	 */
+    protected frontend_model_template $template;
+    protected frontend_model_data $data;
 
 	/**
-	 * paramètre pour la requête JSON
+	 * @var bool $dotless
 	 */
-	public $json_multi_data,$marker,$dotless;
+	public bool $dotless;
 
 	/**
-	 * @access public
-	 * Constructor
+	 * @var string $lang
+	 * @var string $marker
 	 */
-	public function __construct()
-	{
+	public string
+		$lang,
+		$marker;
+
+	/**
+	 * @var array $conf
+	 */
+	public array $conf;
+
+	/**
+	 *
+	 */
+	public function __construct() {
 	    $this->template = new frontend_model_template();
 		$this->data = new frontend_model_data($this);
-		$this->getlang = $this->template->currentLanguage();
-		$formClean = new form_inputEscape();
-
-		if(http_request::isGet('marker')){
-			$this->marker = $formClean->simpleClean($_GET['marker']);
+		$this->lang = $this->template->lang;
+		if(http_request::isGet('marker')) $this->marker = form_inputEscape::simpleClean($_GET['marker']);
+		$this->dotless = http_request::isGet('dotless');
+		$config = $this->getItems('config');
+		if(!empty($config)) {
+			$configId = [];
+			$configValue = [];
+			foreach($config as $key){
+				$configId[] = $key['config_id'];
+				$configValue[] = $key['config_value'];
+			}
+			$config = array_combine($configId,$configValue);
 		}
-
-		$this->dotless = http_request::isGet('dotless') ? true : false;
+		$this->conf = $config;
 	}
 
 	/**
 	 * Assign data to the defined variable or return the data
 	 * @param string $type
-	 * @param string|int|null $id
-	 * @param string $context
-	 * @param boolean $assign
+	 * @param string|array|null $id
+	 * @param string|null $context
+	 * @param bool|string $assign
 	 * @return mixed
 	 */
-	private function getItems($type, $id = null, $context = null, $assign = true) {
+	private function getItems(string $type, $id = null, ?string $context = null, $assign = false) {
 		return $this->data->getItems($type, $id, $context, $assign);
 	}
 
-    /**
+	/**
 	 * Load map data
-     * @access private
-     */
-	private function setJsConfig() {
-		$addresses = $this->getItems('addresses',array('lang' => $this->getlang),'all');
-		$config = parent::fetchData(array('context' => 'all','type' => 'config'));
-
-        $configId = array();
-        $configValue = array();
-        foreach($config as $key){
-            $configId[] = $key['config_id'];
-            $configValue[] = $key['config_value'];
-        }
-        $setConfig = array_combine($configId,$configValue);
-
+	 * @return string
+	 */
+	private function setJsConfig(): string {
+		$addresses = $this->getAddresses();
+		//$config = $this->conf;
+		$config = ['api_key' => $this->conf['api_key']];
 		if($addresses != null) {
 			$map = [];
 			foreach ($addresses as $addr){
@@ -67,54 +89,46 @@ class plugins_gmap_public extends plugins_gmap_db
 				$mark = substr($mark, 0, -1).'}';
 				$map[] = $mark;
 			}
-			$setConfig['markers'] = '['.implode(',',$map).']';
+			$config['markers'] = '['.implode(',',$map).']';
 		}
 		else {
-			$setConfig['markers'] = '[]';
+			$config['markers'] = '[]';
 		}
 
-		$config = [];
-		foreach ($setConfig as $k => $v) {
+		$configString = [];
+		foreach ($config as $k => $v) {
 			if($k != 'markers')
 				$v = json_encode($v);
-			$config[]= $k.':'.$v;
+			$configString[]= $k.':'.$v;
 		}
 		$detect = new Mobile_Detect;
 		$OS = false;
 		if( $detect->isiOS() ){
 			$OS = 'IOS';
-		}elseif( $detect->isAndroidOS() ){
+		}
+		elseif( $detect->isAndroidOS() ){
 			$OS = 'Android';
 		}
-		$config[] = '"OS":"'.$OS.'"';
-		$config[] = '"lang":"'.$this->getlang.'"';
-		$this->template->assign('config_gmap','{'.implode(',',$config).'}');
-	}
-
-    /**
-	 * Load map data
-     * @access private
-     */
-	private function setConfig() {
-		$config = parent::fetchData(array('context' => 'all','type' => 'config'));
-
-        $configId = array();
-        $configValue = array();
-        foreach($config as $key){
-            $configId[] = $key['config_id'];
-            $configValue[] = $key['config_value'];
-        }
-        $setConfig = array_combine($configId,$configValue);
-
-		$config = [];
-		foreach ($setConfig as $k => $v) {
-			$config[$k] = $v;
-		}
-		$this->template->assign('config',$config);
+		$configString[] = '"OS":"'.$OS.'"';
+		$configString[] = '"lang":"'.$this->lang.'"';
+		return '{'.implode(',',$configString).'}';
 	}
 
 	/**
-	 * @access public
+	 * Load map data
+	 * @return array
+	 */
+	private function setConfig(): array {
+		$config = [];
+		if(!empty($this->conf)) {
+			foreach ($this->conf as $k => $v) {
+				$config[$k] = $v;
+			}
+		}
+		return $config;
+	}
+
+	/**
 	 * Execute le plugin dans la partie public
 	 */
 	public function run() {
@@ -127,7 +141,7 @@ class plugins_gmap_public extends plugins_gmap_db
 				$markerPath = component_core_system::basePath().'/plugins/gmap/markers/'.$this->marker.($this->dotless?'-dotless':'').'.svg';
 
 				if(!file_exists($markerPath)) {
-					$config = parent::fetchData(array('context' => 'one','type' => 'config'));;
+					$config = parent::fetchData(array('context' => 'one','type' => 'config'));
 					$marker = new plugins_gmap_marker($config['markerColor'],$this->template);
 					$marker->createMarker();
 				} else {
@@ -142,11 +156,31 @@ class plugins_gmap_public extends plugins_gmap_db
 				header('Content-type: image/svg+xml');
 				print $img;
 			}
-		} else {
-			$this->getItems('page',array('lang' => $this->getlang),'one');
-			$this->setConfig();
-			$this->setJsConfig();
+		}
+		else {
+			$this->getItems('page',['lang' => $this->lang],'one',true);
+			$this->template->assign('addresses',$this->getAddresses());
+			$this->template->assign('config',$this->setConfig());
+			$this->template->assign('config_gmap',$this->setJsConfig());
 			$this->template->display('gmap/index.tpl');
 		}
     }
+
+	/**
+	 * @return array
+	 */
+	public function outrun(): array {
+		return [
+			'page' => $this->getItems('page',['lang' => $this->lang],'one'),
+			'config' => $this->setConfig(),
+			'config_gmap' => $this->setJsConfig()
+		];
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getAddresses(): array {
+		return $this->getItems('addresses',['lang' => $this->lang],'all')?: [];
+	}
 }

@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `mc_gmap_address_content` (
   `mobile_address` varchar(45) DEFAULT NULL,
   `fax_address` varchar(45) DEFAULT NULL,
   `email_address` varchar(150) DEFAULT NULL,
+  `vat_address` varchar(80) DEFAULT NULL,
   `lat_address` double NOT NULL,
   `lng_address` double NOT NULL,
   `link_address` varchar(200) DEFAULT NULL,
@@ -70,7 +71,7 @@ INSERT INTO `mc_gmap_config` (`id_gmap_config`, `config_id`, `config_value`) VAL
 (NULL, 'markerColor', '#f3483c'),
 (NULL, 'api_key', NULL);
 
-INSERT INTO `mc_config_img` (`id_config_img`, `module_img`, `attribute_img`, `width_img`, `height_img`, `type_img`, `resize_img`) VALUES
-(null, 'plugins', 'gmap', '360', '270', 'small', 'adaptive'),
-(null, 'plugins', 'gmap', '480', '360', 'medium', 'adaptive'),
-(null, 'plugins', 'gmap', '960', '720', 'large', 'adaptive');
+INSERT INTO `mc_config_img` (`id_config_img`, `module_img`, `attribute_img`, `width_img`, `height_img`, `type_img`, `prefix_img`, `resize_img`) VALUES
+(null, 'gmap', 'gmap', '360', '270', 'small', 's', 'adaptive'),
+(null, 'gmap', 'gmap', '480', '360', 'medium', 'm', 'adaptive'),
+(null, 'gmap', 'gmap', '960', '720', 'large', 'l', 'adaptive');

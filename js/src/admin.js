@@ -1,9 +1,4 @@
-var gmap = (function ($, undefined) {
-    /**
-     * Globals
-     */
-    this.timer = false;
-
+const gmap = (($, undefined) => {
     /**
      * @param input
      */
@@ -81,72 +76,19 @@ var gmap = (function ($, undefined) {
         }, true);
     }
 
-    /**
-     * updateTimer
-     * @param ts
-     * @param func
-     */
-    function updateTimer(ts, func) {
-        if (this.timer) clearTimeout(this.timer);
-        this.timer = setTimeout(func, ts ? ts : 1000);
-    }
-
-    /**
-     * watch fields
-     * @param field
-     */
-    function watch(field) {
-        field.keypress(function () {
-            updateTimer('', 'gmap.initMapConfig();');
-        }).change(function () {
-            updateTimer(100, 'gmap.initMapConfig();');
-        });
-    }
-
-    /**
-     * Retreive lat and lng of the address
-     */
-    function loadMapConfig(){
-        $('.tab-pane').each(function(){
-            var self = $(this),
-                addr = self.find('.address').val(),
-                postc = self.find('.postcode').val(),
-                city = self.find('.city').val(),
-                country = self.find('.country').val();
-
-            if( addr !== '' && postc !== '' && city !== '' ) {
-                var adr = addr +', '+ postc +' '+ city + ', ' + country;
-
-                self.find('.map-col')
-                    .gmap3()
-                    .latlng({
-                        address: adr
-                    }).then(function(latlng){
-                    self.find(".lat").val(latlng.lat());
-                    self.find(".lng").val(latlng.lng());
-                });
-            }
-        });
-    }
-
     return {
         run: function() {
             $('.csspicker').colorpicker();
         },
         addAddress: function() {
             if ($(".map-col").length != 0) {
-                watch($('.address'));
-                watch($('.city'));
-                watch($('.postcode'));
-
                 var defaultLabel = $('span#input-label').text();
 
                 $('.inputfile').each(function() {
                     var label	 = $('span#input-label'),
                         labelVal = label.innerHTML;
 
-                    $(this).on( 'change', function( e )
-                    {
+                    $(this).on( 'change', function( e ) {
                         var fileName = e.target.value;
 
                         if( fileName != '' ) {
@@ -183,9 +125,95 @@ var gmap = (function ($, undefined) {
 
                 initDropZone();
             }
-        },
-        initMapConfig: function () {
-            loadMapConfig();
         }
     };
 })(jQuery);
+
+class GoogleMap {
+    /**
+     * @param {Element} tab
+     * @param {Object} Libraries
+     */
+    constructor(tab, Libraries) {
+        this.g = Libraries;
+        this.timer = null;
+        this.tab = tab;
+        this.addr = this.tab.querySelector('.address');
+        this.postc = this.tab.querySelector('.postcode');
+        this.city = this.tab.querySelector('.city');
+        this.country = this.tab.querySelector('.country');
+        this.lat = this.tab.querySelector('.lat');
+        this.lng = this.tab.querySelector('.lng');
+        this.init();
+    }
+
+    setLatLng() {
+        let GM = this;
+        let address = GM.addr.value +', '+ GM.postc.value +' '+ GM.city.value + ', ' + GM.country.value;
+        let geocoder = new GM.g.Geocoder();
+        geocoder.geocode( { 'address' : address }, ( results, status ) => {
+            if( status === google.maps.GeocoderStatus.OK ) {
+                GM.lat.value = results[0].geometry.location.lat();
+                GM.lng.value = results[0].geometry.location.lng();
+            }
+        });
+    }
+
+    /**
+     * @param {function} callback
+     * @param {int} timeout
+     */
+    updateTimer(callback,timeout) {
+        let GM = this;
+        if (this.timer) clearTimeout(this.timer);
+        this.timer = setTimeout(callback, timeout ? timeout : 1000);
+    }
+
+    /**
+     * @param {HTMLInputElement} field
+     */
+    watch(field) {
+        let GM = this;
+        field.addEventListener('keyup',() => {
+            GM.updateTimer(() => {
+                GM.setLatLng();
+            });
+        });
+        field.addEventListener('focusout',() => {
+            GM.updateTimer(() => {
+                GM.setLatLng();
+            },100);
+        });
+        field.addEventListener('change',() => {
+            GM.updateTimer(() => {
+                GM.setLatLng();
+            },100);
+        });
+    }
+
+    init() {
+        let GM = this;
+        GM.watch(GM.addr);
+        GM.watch(GM.postc);
+        GM.watch(GM.city);
+    }
+}
+
+async function initMap() {
+    const { Geocoder } = await google.maps.importLibrary("geocoding");
+
+    let tabs = document.querySelectorAll('.tab-pane');
+    tabs.forEach((tab) => {
+        tab.GM = new GoogleMap(tab, {Geocoder: Geocoder});
+    });
+}
+
+(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+    key: configMap.api_key,
+    v: "weekly",
+    lang: configMap.lang
+    // Use the 'v' parameter to indicate the version to use (weekly, beta, alpha, etc.).
+    // Add other bootstrap parameters as needed, using camel case.
+});
+
+initMap();
