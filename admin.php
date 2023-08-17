@@ -72,11 +72,13 @@ class plugins_gmap_admin extends plugins_gmap_db {
 		$content,
 		$address;
 
-	/**
-	 * plugins_gmap_admin constructor.
-	 */
-	public function __construct() {
-		$this->template = new backend_model_template();
+    /**
+     * @param backend_model_template|null $t
+     * @throws Exception
+     */
+    public function __construct(?backend_model_template $t = null)
+    {
+        $this->template = $t instanceof backend_model_template ? $t : new backend_model_template;
 		$this->data = new backend_model_data($this);
 		$this->message = new component_core_message($this->template);
 		$this->plugins = new backend_controller_plugins();
