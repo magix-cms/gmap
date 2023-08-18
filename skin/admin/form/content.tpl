@@ -33,7 +33,7 @@
                 </div>
             </div>
         </div>
-        <input type="hidden" id="id_gmap" name="id" value="{$pages.id_gmap}">
+        {*<input type="hidden" id="id_gmap" name="id" value="{$pages.id_gmap}">*}
         <button class="btn btn-main-theme pull-right" type="submit" name="action" value="edit">{#save#|ucfirst}</button>
     </form>
 </div>

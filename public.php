@@ -159,6 +159,7 @@ class plugins_gmap_public extends plugins_gmap_db {
 		}
 		else {
 			$this->getItems('page',['lang' => $this->lang],'one',true);
+            $this->template->breadcrumb->addItem($this->template->getConfigVars('gmap'));
 			$this->template->assign('addresses',$this->getAddresses());
 			$this->template->assign('config',$this->setConfig());
 			$this->template->assign('config_gmap',$this->setJsConfig());
