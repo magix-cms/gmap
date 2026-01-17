@@ -39,7 +39,7 @@ class plugins_gmap_db {
 				case 'addressContent':
 					$query = 'SELECT a.*,c.*
 							FROM mc_gmap_address AS a
-							JOIN mc_gmap_address_content AS c USING(id_address)
+							JOIN mc_gmap_address_content AS c ON(a.id_address = c.id_address)
 							JOIN mc_lang AS lang ON(c.id_lang = lang.id_lang)
 							WHERE c.id_address = :id';
 					break;
@@ -91,6 +91,9 @@ class plugins_gmap_db {
 				case 'lastAddress':
 					$query = 'SELECT * FROM mc_gmap_address ORDER BY id_address DESC LIMIT 0,1';
 					break;
+                case 'img':
+                    $query = 'SELECT * FROM mc_gmap_address ORDER BY id_address WHERE id_address = :id';
+                    break;
 				default:
 					return false;
 			}
@@ -200,8 +203,9 @@ class plugins_gmap_db {
 						SET config_value = CASE config_id
 							WHEN 'api_key' THEN :api_key
 							WHEN 'markerColor' THEN :markerColor
+						    WHEN 'appId' THEN :appId
 						END
-						WHERE config_id IN ('api_key','markerColor')";
+						WHERE config_id IN ('api_key','markerColor','appId')";
 				break;
 			case 'img':
 				$query = 'UPDATE mc_gmap_address

@@ -1,0 +1,1 @@
+INSERT INTO `mc_gmap_config` (`id_gmap_config`, `config_id`, `config_value`) VALUES (NULL, 'appId', NULL);

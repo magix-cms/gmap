@@ -1,142 +1,121 @@
 // Compiler options
 @import (reference) "mixins";
+
+// Variables de configuration
 @mapH: 600px;
 @formH: 50px;
 @alertH: 50px;
+@transitionSpeed: 0.35s;
+@panelWidth: 450px; // Largeur du panneau sur desktop
 
 #gmap {
-	.form-search {
-		:is(input, button) {
-			border-radius: 0;
-			border-bottom: none;
-			border-top: none;
-		}
-
-		input {
-			height: @formH;
-			padding: 1rem;
-			border: none;
-		}
-
-		.subdirection {
-			.size(52px,@formH);
-			border-color: #ddd;
-		}
+	.material-icons, .ico {
+		vertical-align: middle;
+		display: inline-block;
+		line-height: 1;
 	}
-
 	.map {
 		min-height: @mapH;
-		position: relative;
+		position: relative; // Référentiel pour tous les éléments en absolute (panneaux)
 		overflow: hidden;
 		margin-bottom: 2rem;
+		display: block; // Le parent n'a plus besoin d'être flex si le panneau est en absolute
 
+		// Conteneur de la carte (Option 2 avec div fantôme respectée)
 		> div:first-child {
-			display: table;
 			width: 100%;
-			position: relative;
+			height: @mapH;
+			display: block;
 		}
 	}
 
 	.gmap3 {
 		height: @mapH;
 		width: 100%;
-		float: right;
-		display: table-cell;
-		transition: all .5s ease;
-		border-right: 1px solid #ccc;
+		transition: all @transitionSpeed ease;
+		z-index: 1;
 
 		img {
 			max-width: inherit;
 		}
-	}
 
-	.adp-directions {
-		.table;
-		.table-hover;
-	}
-
-	.adp-placemark {
-		margin: 0 0 10px;
-		border-left: none;
-		border-right: none;
-		width: 100%;
-		td {
-			padding: .5rem 1rem;
-		}
-	}
-
-	:is(.adp-summary,.adp-legal) {
-		padding: 0 .5rem .5rem;
-	}
-
-	.map_loader {
-		position: relative;
-		margin-top: 25%;
-		left: 48%;
-		margin-left: -1rem;
-	}
-
-	.gmap-content {
-		margin-bottom: 2rem;
-	}
-}
-
-#r-directions {
-	display: table-cell !important;
-	.size(1%,(@mapH - @formH - @alertH));
-	.auto-transition(.5s);
-	position: absolute;
-	right: -1%;
-
-	&.sizedirection {
-		.no-martini;
-		float: none;
-		overflow: auto;
-		position: relative;
-		width: 100%;
-		border: none;
-		border-right: 1px solid #ddd;
-		right: auto;
-		left: 0;
-
-		.adp {
-			height: (@mapH - @formH - @alertH);
-			background-color: #fff;
-			overflow-x: hidden;
-			overflow-y: scroll;
-			position: relative;
-
-			/* Hide scrollbar for IE, Edge and Firefox */
-			-ms-overflow-style: none;  /* IE and Edge */
-			scrollbar-width: none;  /* Firefox */
-			/* Hide scrollbar for Chrome, Safari and Opera */
-			&::-webkit-scrollbar {
-				display: none;
+		// Support pour les nouveaux Advanced Markers
+		.google-maps-marker-view {
+			transition: transform 0.2s ease-out;
+			cursor: pointer;
+			overflow: visible !important;
+			&:hover {
+				transform: scale(1.1);
+				z-index: 1000 !important;
 			}
 		}
 	}
+
+	// Styles des labels sur les marqueurs (A, B, etc.)
+	.marker-label {
+		font-family: Arial, sans-serif;
+		font-size: 12px;
+		text-shadow: 0 0 2px black;
+		color: #fff;
+		font-weight: bold;
+		pointer-events: none;
+	}
+
+	.form-search {
+		:is(input, button) {
+			border-radius: 0;
+			border: none;
+		}
+		input {
+			height: @formH;
+			padding: 1rem;
+			background: #fff;
+		}
+		.subdirection {
+			.size(52px, @formH);
+			border-left: 1px solid #ddd;
+		}
+		.input-group {
+			display: flex;
+			width: 100%;
+			input.form-control { flex-grow: 2; }
+		}
+	}
 }
 
-#showform {
-	&.open {
-		.open { display: none; }
-	}
-	&:not(.open) {
-		.close { display: none; }
-	}
-}
-
+// LE PANNEAU FLOTTANT (ADRESSE + RECHERCHE)
 #gmap-address {
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
-	.auto-transition(.35s);
+	z-index: 10;
+	pointer-events: none;
+	display: flex;
+	flex-direction: column; // Empile les éléments verticalement
+	max-height: @mapH; // Empêche de dépasser de la carte
 
 	@media (min-width: @screen-sm-min) {
-		max-width: 450px;
+		max-width: @panelWidth;
 	}
 
+	// Réactiver les clics sur les éléments interactifs
+	.alert, .form-search, #r-directions, .hidepanel {
+		pointer-events: auto;
+	}
+	// Le conteneur de recherche et l'alerte restent en haut
+	#searchdir, .alert {
+		flex-shrink: 0; // Ils ne doivent pas rétrécir
+	}
+	&.open {
+		transform: translate(0, 0);
+		box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+	}
+
+	&:not(.open) {
+		@media (max-width: @screen-xs-max) { transform: translateY(-100%); }
+		@media (min-width: @screen-sm-min) { transform: translateX(-100%); }
+	}
 	.alert {
 		background-color: var(--main-color);
 		color: #f2f2f2;
@@ -145,114 +124,102 @@
 		border: none;
 		position: relative;
 
+		// FORCE l'alignement vertical du contenu
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		min-height: @alertH;
+		padding: 0.5rem 1rem;
+		& {
+			box-shadow: 0 2px 5px rgba(0,0,0,0.1); // Donne un peu de relief constant
+		}
+		// On neutralise les anciens styles qui pourraient décaler le bouton
 		.btn:not(.hidepanel) {
-			top: 50%;
-			right: 5px;
-			position: absolute;
-			color: #f2f2f2;
-			font-size: 18px;
-			line-height: 1;
-			transform: translateY(-50%);
+			position: relative; // On enlève l'absolute s'il y en avait un
+			top: auto;
+			right: auto;
+			transform: none;
+			margin-left: 10px; // Espace avec le texte de l'adresse
+			order: 2; // Force le bouton à être à droite dans le flex
+		}
+
+		#address {
+			flex: 1;
+			order: 1;
 		}
 	}
 
-	.material-icons {
-		vertical-align: middle;
-		font-size: inherit;
+	// LE PANNEAU D'ITINÉRAIRE (S'affiche par-dessus la carte)
+	#r-directions {
+		position: relative; // On passe de absolute à relative
+		width: 100%;
+		background: #fff;
+		z-index: 5;
+		overflow-y: auto;
+
+		// Animation de glissement (on utilise max-height pour l'effet de dépliage)
+		max-height: 0;
+		opacity: 0;
+		transition: max-height @transitionSpeed ease, opacity @transitionSpeed ease;
+		border-bottom: 0 solid #ddd;
+
+		&.sizedirection {
+			max-height: (@mapH - @formH - @alertH); // Prend la place restante
+			opacity: 1;
+			border-bottom-width: 2px;
+			box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+		}
+
+		.adp {
+			padding: 1rem;
+			&::-webkit-scrollbar { width: 6px; }
+			&::-webkit-scrollbar-thumb { background: #ccc; }
+		}
 	}
 
-	&.open {
-		transform: translate(0,0);
-	}
-	&:not(.open) {
-		@media (max-width: @screen-xs-max) {
-			transform: translate(0, -100%);
-		}
-		@media (min-width: @screen-sm-min) {
-			transform: translate(-100%, 0);
-		}
-	}
-
+	// BOUTON POUR CACHER/AFFICHER LE PANNEAU
+	// BOUTON POUR CACHER/AFFICHER LE PANNEAU
 	.hidepanel {
 		position: absolute;
-		opacity: 1;
+		background: #fff;
+		border: 1px solid #ddd;
 		color: @text-color;
-		.auto-transition(.35s);
-
-		&.open {
-			.show-more { display: none; }
-		}
-		&:not(.open) {
-			.show-less { display: none; }
-		}
+		cursor: pointer;
+		z-index: 15; // S'assure qu'il est au-dessus du reste
 
 		@media (max-width: @screen-xs-max) {
 			right: 50%;
 			bottom: 0;
-			top: auto;
-			line-height: 1;
-			padding: 10px 20px;
 			transform: translate(50%, 100%);
-
-			.hor {
-				display: none;
-			}
+			padding: 10px 20px;
+			.hor { display: none; }
 		}
 
 		@media (min-width: @screen-sm-min) {
 			right: 0;
-			top: -50%;
+			// MODIFICATION ICI :
+			top: (@alertH / 2); // On le place au milieu théorique de l'alerte
+			transform: translate(100%, -50%); // On le décale de sa propre moitié vers le haut pour un centrage parfait
+
 			padding: 14px 10px;
-			transform: translateX(100%);
-
-			.ver {
-				display: none;
-			}
+			.ver { display: none; }
 		}
-	}
 
-	.collapsed {
-		~ .hidepanel {
-			opacity: 0;
-			@media (min-width: @screen-sm-min) {
-				top: 0;
-			}
-			@media (max-width: @screen-xs-max) {
-				bottom: -1px;
-			}
-		}
-	}
-
-	.form-search {
-		.input-group {
-			display: flex;
-			width: 100%;
-			flex-wrap: wrap;
-
-			:is(input,.input-group-addon,.input-group-btn) {
-				display: inline-flex;
-				align-items: center;
-				width: auto;
-				line-height: 1.1;
-			}
-			label {
-				margin-bottom: 0;
-			}
-			input.form-control {
-				float: none;
-				flex-grow: 2;
-			}
-		}
+		&.open { .show-more { display: none; } }
+		&:not(.open) { .show-less { display: none; } }
 	}
 }
 
+// LISTE DES ADRESSES SOUS LA CARTE
 #addresses {
-	h3 {
-		color: var(--main-color);
-		font-weight: bold;
-	}
+	margin-top: 2rem;
+	h3 { color: var(--main-color); font-weight: bold; }
+	.row > div { padding-bottom: 30px; }
+	.img-responsive { max-width: 100%; height: auto; }
+}
 
-	> .row > div {
-		padding-bottom: 30px;
-	}
+// GESTION DU BOUTON FORMULAIRE (OPEN/CLOSE)
+#showform {
+	&.open { .open { display: none; } }
+	&:not(.open) { .close { display: none; } }
 }

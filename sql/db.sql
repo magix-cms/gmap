@@ -69,7 +69,8 @@ CREATE TABLE IF NOT EXISTS `mc_gmap_config` (
 
 INSERT INTO `mc_gmap_config` (`id_gmap_config`, `config_id`, `config_value`) VALUES
 (NULL, 'markerColor', '#f3483c'),
-(NULL, 'api_key', NULL);
+(NULL, 'api_key', NULL),
+(NULL, 'appId', NULL);
 
 INSERT INTO `mc_config_img` (`id_config_img`, `module_img`, `attribute_img`, `width_img`, `height_img`, `type_img`, `prefix_img`, `resize_img`) VALUES
 (null, 'gmap', 'gmap', '360', '270', 'small', 's', 'adaptive'),

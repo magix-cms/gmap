@@ -1,5 +1,5 @@
 {extends file="layout.tpl"}
-{block name="styleSheet" append}{if $consentedCookies.ggMapCookies}
+{block name="styleSheet"}{if $consentedCookies.ggMapCookies}
     {$css_files = ["gmap","form"]}
 {/if}{/block}
 {block name="title"}{seo_rewrite conf=['level'=>'root','type'=>'title','default'=>{#seo_title_gmap#}]}{/block}
@@ -18,14 +18,6 @@
 {block name="scripts"}
     <script type="text/javascript">
         let configMap = {$config_gmap};
-        /*async function initMap() {
-            const { Map } = await google.maps.importLibrary("maps");
-            const { Marker } = await google.maps.importLibrary("marker");
-
-            //window.addEventListener('DOMContentLoaded',() => {
-            let gMap = new GoogleMap(configMap);
-            //});
-        }*/
     </script>
     {$jquery = false}
     {$js_files = [

@@ -46,7 +46,8 @@
         }*/
     </script>
     {capture name="scriptForm"}{strip}
-        /{baseadmin}/min/?f=plugins/gmap/js/admin.min.js
+        /{baseadmin}/min/?f=plugins/gmap/js/admin.min.js,
+        /{baseadmin}/min/?f=plugins/gmap/js/gmapdetect.min.js
     {/strip}{/capture}
     {script src=$smarty.capture.scriptForm type="javascript"}
     {*<script type="text/javascript">

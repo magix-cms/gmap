@@ -17,7 +17,7 @@
     {/if}
     <div class="map">
         <div>
-            <div id="gmap_map" class="gmap3"></div>
+            <div id="gmap_map" class="gmap3" data-map-id="{if $config.appId != '' AND $config.appId != NULL}{else}VOTRE_ID_REEL_ICI"{/if}></div>
         </div>
         <div id="gmap-address" class="open">
             <div id="searchdir" class="collapse">

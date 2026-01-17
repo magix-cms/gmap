@@ -6,8 +6,12 @@
                 <label for="api_key">API KEY :</label>
                 <input type="text" class="form-control" id="api_key" name="cfg[api_key]" value="{$getConfigData.api_key}" size="50" />
             </div>
+            <div class="form-group">
+                <label for="api_key">AppId :</label>
+                <input type="text" class="form-control" id="api_key" name="cfg[appId]" value="{$getConfigData.appId}" size="50" />
+            </div>
             <div class="row">
-                <div class="col-xs-12 col-sm-4 col-md-3">
+                <div class="col-xs-12 col-sm-4 col-md-4">
                     <div class="form-group">
                         <label>Marqueur :</label>
                         {*{if is_array($markerCollection) && !empty($markerCollection)}

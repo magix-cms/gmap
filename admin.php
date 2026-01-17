@@ -217,9 +217,11 @@ class plugins_gmap_admin extends plugins_gmap_db {
 			case 'content':
 				$collection = $this->getItems('pages',null,'all',false);
 				return $this->setItemContentData($collection);
+                break;
 			case 'address':
 				$collection = $this->getItems('addressContent',$this->edit,'all',false);
 				return $this->setItemAddressData($collection);
+                break;
 		}
 		return [];
 	}
@@ -421,12 +423,11 @@ class plugins_gmap_admin extends plugins_gmap_db {
 							if(!empty($this->address)) {
 								$notify = 'update';
 								$img = null;
-
-								if(isset($this->slide['id']) && !empty($this->address['id'])) {
-									$img = parent::fetchData(array('context' => 'one', 'type' => 'img'),$this->address['id']);
-									$img = $img['img_slide'];
+								if(isset($this->address['id']) && !empty($this->address['id'])) {
+									$img = $this->getItems('img',['id' => $this->address['id']],'one',false);//parent::fetchData(array('context' => 'one', 'type' => 'img'),$this->address['id']);
+                                    $img = $img['img_address'];
+                                    //print $this->address['id'];
 								}
-
 								if (!isset($this->address['id'])) {
                                     $lastAddress = $this->add(['type' => 'address']);
 									//$lastAddress = $this->getItems('lastAddress', null,'one',false);
@@ -436,13 +437,13 @@ class plugins_gmap_admin extends plugins_gmap_db {
                                     }
 								}
 
-								if(!empty($this->img) && !empty($id)) {
+								if(!empty($this->img) && !empty($this->address['id'])) {
 									$resultUpload = $this->upload->setImageUpload(
 										'img', [
 										'name' => filter_rsa::randMicroUI(),
 										'edit' => $img,
 										'prefix' => ['s_','m_','l_'],
-										'module_img' => 'plugins',
+										'module_img' => 'gmap',
 										'attribute_img' => 'gmap',
 										'original_remove' => false
 									],[
