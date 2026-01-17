@@ -94,9 +94,25 @@
 	display: flex;
 	flex-direction: column; // Empile les éléments verticalement
 	max-height: @mapH; // Empêche de dépasser de la carte
+	transition: transform @transitionSpeed ease;
 
 	@media (min-width: @screen-sm-min) {
 		max-width: @panelWidth;
+	}
+
+	// ÉTAT FERMÉ : On cache le panneau à gauche (ou en haut sur mobile)
+	&:not(.open) {
+		@media (max-width: @screen-xs-max) {
+			transform: translateY(-100%);
+		}
+		@media (min-width: @screen-sm-min) {
+			transform: translateX(-100%);
+		}
+	}
+	// ÉTAT OUVERT : On le remet à sa position d'origine
+	&.open {
+		transform: translate(0, 0);
+		box-shadow: 5px 0 15px rgba(0,0,0,0.1);
 	}
 
 	// Réactiver les clics sur les éléments interactifs
@@ -107,15 +123,7 @@
 	#searchdir, .alert {
 		flex-shrink: 0; // Ils ne doivent pas rétrécir
 	}
-	&.open {
-		transform: translate(0, 0);
-		box-shadow: 5px 0 15px rgba(0,0,0,0.1);
-	}
 
-	&:not(.open) {
-		@media (max-width: @screen-xs-max) { transform: translateY(-100%); }
-		@media (min-width: @screen-sm-min) { transform: translateX(-100%); }
-	}
 	.alert {
 		background-color: var(--main-color);
 		color: #f2f2f2;
@@ -177,8 +185,6 @@
 		}
 	}
 
-	// BOUTON POUR CACHER/AFFICHER LE PANNEAU
-	// BOUTON POUR CACHER/AFFICHER LE PANNEAU
 	.hidepanel {
 		position: absolute;
 		background: #fff;
@@ -197,12 +203,20 @@
 
 		@media (min-width: @screen-sm-min) {
 			right: 0;
-			// MODIFICATION ICI :
 			top: (@alertH / 2); // On le place au milieu théorique de l'alerte
 			transform: translate(100%, -50%); // On le décale de sa propre moitié vers le haut pour un centrage parfait
 
 			padding: 14px 10px;
 			.ver { display: none; }
+		}
+		&::after {
+			content: '';//'‹';
+			display: inline-block;
+			transition: transform @transitionSpeed; // La flèche tourne aussi !
+		}
+
+		&:not(.open)::after {
+			transform: rotate(180deg); // La flèche pointe vers la droite quand c'est fermé
 		}
 
 		&.open { .show-more { display: none; } }
