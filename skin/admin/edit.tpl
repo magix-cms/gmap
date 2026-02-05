@@ -35,7 +35,12 @@
 {block name="foot" append}
     {include file="section/footer/editor.tpl"}
     <script type="text/javascript">
-        let configMap = {json_encode($getConfigData)};
+        {literal}
+        const configMap = {
+            api_key: "{/literal}{$getConfigData.api_key}{literal}",
+            lang: 'fr'
+        };
+        {/literal}
         /*async function initMap() {
             const { Map } = await google.maps.importLibrary("maps");
             const { Marker } = await google.maps.importLibrary("marker");
@@ -46,8 +51,7 @@
         }*/
     </script>
     {capture name="scriptForm"}{strip}
-        /{baseadmin}/min/?f=plugins/gmap/js/admin.min.js,
-        /{baseadmin}/min/?f=plugins/gmap/js/gmapdetect.min.js
+        /{baseadmin}/min/?f=plugins/gmap/js/admin.min.js,plugins/gmap/js/gmapdetect.min.js
     {/strip}{/capture}
     {script src=$smarty.capture.scriptForm type="javascript"}
     {*<script type="text/javascript">
