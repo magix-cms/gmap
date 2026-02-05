@@ -13,6 +13,10 @@ Gmap for Magix CMS 2.x.x => https://github.com/gtraxx/gmap
 
 #### Créer et distribuer par [Magix CMS](http://www.magix-cms.com)
 
+### Clés API
+ * MapsID : https://developers.google.com/maps/documentation/javascript/map-ids/get-map-id?hl=fr
+ * Api Key : https://docs.cloud.google.com/docs/authentication/api-keys?hl=fr
+
 ## Installation
  * Décompresser l'archive dans le dossier "**plugins**" de magix cms
  * Connectez-vous dans l'administration de votre site internet 
